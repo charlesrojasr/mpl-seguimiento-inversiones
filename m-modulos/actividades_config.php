@@ -98,7 +98,7 @@ $titulocampobd7P  = 'Fecha Inicio';
 $titulocampobd8P  = 'Días';
 $titulocampobd9P  = 'Fecha Final';
 $titulocampobd10P = 'Estado';
-$titulocampobd11P = 'Fecha Reprogramada';
+$titulocampobd11P = 'Fecha Fin Reprogramada';
 
 
 /*

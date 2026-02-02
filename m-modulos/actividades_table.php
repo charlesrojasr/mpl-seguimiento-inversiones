@@ -46,18 +46,21 @@
         <div class="row">
 
             <div class="col-md-4 mb-2">
+                <label for="inputEmail3" class="col-form-label">Etapa:</label>
                 <select id="etapaFiltro" class="form-control">
                     <option value="">Etapa</option>
                 </select>
             </div>
 
             <div class="col-md-4 mb-2">
+                <label for="inputEmail3" class="col-form-label">Unidad Orgánica:</label>
                 <select id="areaFiltro" class="form-control">
                     <option value="">Área</option>
                 </select>
             </div>
 
             <div class="col-md-4 mb-2">
+                <label for="inputEmail3" class="col-form-label">Estado:</label>
                 <select id="estadoFiltro" class="form-control">
                     <option value="">Estado</option>
                 </select>
@@ -149,12 +152,14 @@
                         </span>
                     </td>
 
+                    
+
                     <td style="white-space: nowrap;">
-                        <?php
-                        if (!empty($motoTaxy[$titulocampobd11])) {
-                            echo date('d/m/Y', strtotime($motoTaxy[$titulocampobd11]));
-                        }
-                        ?>
+                        <?php if (!empty($motoTaxy[$titulocampobd11])): ?>
+                            <span class="estado-pill" style="background:#de0707;">
+                                <?php echo date('d/m/Y', strtotime($motoTaxy[$titulocampobd11])); ?>
+                            </span>
+                        <?php endif; ?>
                     </td>
 
                 </tr>
