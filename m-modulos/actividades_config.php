@@ -9,10 +9,13 @@ include 'config.php'; // Conexión DB
 
 $alertas = [];
 
-$sqlAlertas = "
-SELECT 
-    i.actividad,
+$sqlAlertas = "SELECT 
+    i.id,
+    i.proyecto_id,
+    i.etapa_id,
+    i.area_id,
     i.estado_id,
+    i.actividad,
     p.nombre AS proyecto_name,
     e.nombre AS etapa_name,
     a.nombre AS area_name,
@@ -153,6 +156,3 @@ if (!$getAllMotoTaxy) {
 
     die("Error en la consulta: " . $conn->error);
 }
-
-?>
-

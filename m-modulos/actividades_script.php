@@ -358,9 +358,18 @@
         $("#edit_<?php echo $titulocampobd9; ?>").val(response.fecha_final);
         $("#edit_<?php echo $titulocampobd10; ?>").val(response.estado_name);
         $("#edit_<?php echo $titulocampobd11; ?>").val(response.fecha_reprogramada);
-        $("#edit_<?php echo $titulocampobd12; ?>").val(response.responsable_nombre);
-        $("#edit_<?php echo $titulocampobd13; ?>").val(response.responsable_apellidop);
-        $("#edit_<?php echo $titulocampobd14; ?>").val(response.responsable_apellidom);
+ 
+
+
+        $('#edit_area_id').val(response.area_id).trigger('change');
+        $('#edit_estado_id').val(response.estado_id).trigger('change');
+
+        $('#edit_<?php echo $titulocampobd12; ?>').val(response.responsable_nombre);
+        $('#edit_<?php echo $titulocampobd13; ?>').val(response.responsable_apellidop);
+        $('#edit_<?php echo $titulocampobd14; ?>').val(response.responsable_apellidom);
+
+
+
       }
     });
   }
