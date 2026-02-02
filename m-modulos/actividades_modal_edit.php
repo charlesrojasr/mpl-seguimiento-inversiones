@@ -124,7 +124,38 @@
             </div>
           </div>
 
+          <div class="form-group row">
 
+            <!-- CHECK REPROGRAMAR -->
+            <div class="col-sm-4">
+              <div class="form-check mt-4">
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  id="check_reprogramar"
+                  name="check_reprogramar"
+                  value="1">
+                <label class="form-check-label" for="check_reprogramar">
+                  Reprogramar fecha
+                </label>
+              </div>
+            </div>
+
+            <!-- FECHA REPROGRAMADA -->
+            <div class="col-sm-4" id="contenedor_fecha_reprogramada" style="display:none;">
+              <label><?php echo $titulocampobd11P; ?></label>
+              <input
+                type="date"
+                name="<?php echo $titulocampobd11; ?>"
+                id="edit_<?php echo $titulocampobd11; ?>"
+                class="form-control">
+            </div>
+
+
+           
+
+
+          </div>
 
 
         </div>
@@ -133,6 +164,8 @@
           <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
           <button type="submit" name="edit" class="btn btn-primary">Guardar</button>
         </div>
+
+
       </form>
     </div>
   </div>

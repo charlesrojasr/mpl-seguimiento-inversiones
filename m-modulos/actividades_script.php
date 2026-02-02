@@ -358,7 +358,7 @@
         $("#edit_<?php echo $titulocampobd9; ?>").val(response.fecha_final);
         $("#edit_<?php echo $titulocampobd10; ?>").val(response.estado_name);
         $("#edit_<?php echo $titulocampobd11; ?>").val(response.fecha_reprogramada);
- 
+
 
 
         $('#edit_area_id').val(response.area_id).trigger('change');
@@ -459,3 +459,123 @@
   </script>
 
 <?php } ?>
+
+
+<script>
+  $(document).on('change', '#check_reprogramar', function() {
+
+    const estadoReprogramado = 3;
+
+    const $check = $('#check_reprogramar');
+    const $contenedor = $('#contenedor_fecha_reprogramada');
+    const $fechaReprog = $('#edit_<?php echo $titulocampobd11; ?>');
+    const $fechaFinal = $('#edit_<?php echo $titulocampobd9; ?>');
+    const $estado = $('#edit_estado_id');
+
+    // Guardar estado original SOLO una vez
+    if (!$estado.data('original')) {
+      $estado.data('original', $estado.val());
+    }
+
+    if ($check.is(':checked')) {
+
+      // Mostrar fecha reprogramada
+      $contenedor.slideDown();
+
+      // Bloquear fecha final
+      $fechaFinal.prop('disabled', true);
+
+      // Forzar estado REPROGRAMADO
+      $estado.val(estadoReprogramado);
+
+    } else {
+
+      // Ocultar y limpiar fecha reprogramada
+      $contenedor.slideUp();
+      $fechaReprog.val('');
+
+      // Desbloquear fecha final
+      $fechaFinal.prop('disabled', false);
+
+      // Restaurar estado
+      $estado.prop('disabled', false)
+        .val($estado.data('original'));
+    }
+
+  });
+</script>
+
+<script>
+  $('#edit').on('hidden.bs.modal', function() {
+
+    const $modal = $(this);
+    const $check = $modal.find('#check_reprogramar');
+    const $contenedor = $modal.find('#contenedor_fecha_reprogramada');
+    const $fechaReprog = $modal.find('#edit_<?php echo $titulocampobd11; ?>');
+    const $fechaFinal = $modal.find('#edit_<?php echo $titulocampobd9; ?>');
+    const $estado = $modal.find('#edit_estado_id');
+
+    // 🔄 Reset total
+    $check.prop('checked', false);
+    $contenedor.hide();
+    $fechaReprog.val('');
+
+    $fechaFinal.prop('disabled', false);
+
+    $estado.prop('disabled', false);
+    $estado.removeData('original');
+
+  });
+</script>
+
+<script>
+  $('#edit').on('shown.bs.modal', function () {
+
+    const estadoReprogramado = 3;
+
+    const $modal = $(this);
+    const $check = $modal.find('#check_reprogramar');
+    const $contenedor = $modal.find('#contenedor_fecha_reprogramada');
+    const $fechaReprog = $modal.find('#edit_<?php echo $titulocampobd11; ?>');
+    const $fechaFinal = $modal.find('#edit_<?php echo $titulocampobd9; ?>');
+    const $estado = $modal.find('#edit_estado_id');
+
+    const fechaReprogVal = $fechaReprog.val();
+
+    // 🔴 SI YA TIENE FECHA REPROGRAMADA
+    if (fechaReprogVal && fechaReprogVal !== '') {
+
+      // ❌ NO mostrar check
+      $check.closest('.form-check').hide();
+
+      // ✅ Mostrar campo fecha
+      $contenedor.show();
+
+      // 🔒 Bloquear fecha final
+      $fechaFinal.prop('disabled', true);
+
+      // 🔄 Forzar estado = REPROGRAMADO
+      if (!$estado.data('original')) {
+        $estado.data('original', $estado.val());
+      }
+      $estado.val(estadoReprogramado);
+
+    } else {
+
+      // ✅ Mostrar check
+      $check.closest('.form-check').show();
+
+      // ❌ Ocultar campo fecha
+      $contenedor.hide();
+
+      // 🔓 Desbloquear fecha final
+      $fechaFinal.prop('disabled', false);
+
+      // 🔄 Restaurar estado si existía
+      if ($estado.data('original')) {
+        $estado.val($estado.data('original'));
+      }
+    }
+
+  });
+</script>

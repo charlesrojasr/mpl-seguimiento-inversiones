@@ -1,49 +1,103 @@
 <?php
-include 'actividades_config.php';
+include 'config.php';
 
 if (isset($_POST['edit'])) {
 
-    // ----------------------------------------------------
-    // FUNCIÓN DE LIMPIEZA
-    // ----------------------------------------------------
     function limpiar($conn, $texto)
     {
         return mysqli_real_escape_string($conn, trim($texto));
     }
 
-    // ----------------------------------------------------
-    // 1. ID
-    // ----------------------------------------------------
+    /* =========================
+       ID
+       ========================= */
     $id = intval($_POST['id']);
 
-    // ----------------------------------------------------
-    // 2. CAMPOS DEL FORMULARIO
-    // ----------------------------------------------------
+    /* =========================
+       CAMPOS PRINCIPALES
+       ========================= */
     $area_id   = intval($_POST['area_id']);
     $estado_id = intval($_POST['estado_id']);
 
-    $nombre_resp = limpiar($conn, $_POST[$titulocampobd12] ?? '');
-    $apep_resp   = limpiar($conn, $_POST[$titulocampobd13] ?? '');
-    $apem_resp   = limpiar($conn, $_POST[$titulocampobd14] ?? '');
+    $actividad = limpiar($conn, $_POST['actividad'] ?? '');
 
-    $actividad = limpiar($conn, $_POST[$titulocampobd6] ?? '');
+    /* =========================
+       RESPONSABLE
+       ========================= */
+    $responsable_nombre    = limpiar($conn, $_POST['responsable_nombre'] ?? '');
+    $responsable_apellidop = limpiar($conn, $_POST['responsable_apellidop'] ?? '');
+    $responsable_apellidom = limpiar($conn, $_POST['responsable_apellidom'] ?? '');
 
-    $fecha_inicio = $_POST[$titulocampobd7] ?: null;
-    $fecha_final  = $_POST[$titulocampobd9] ?: null;
+    /* =========================
+       FECHAS
+       ========================= */
+    $fecha_inicio       = $_POST['fecha_inicio'] ?? null;
+    $fecha_final        = $_POST['fecha_final'] ?? null;
+    $fecha_reprogramada = $_POST['fecha_reprogramada'] ?? null;
 
-    // ----------------------------------------------------
-    // 3. UPDATE
-    // ----------------------------------------------------
+    /* =========================
+       FECHA REPROGRAMADA ACTUAL
+       ========================= */
+    $sqlOld = "
+        SELECT fecha_reprogramada
+        FROM inversiones_seg_inversiones
+        WHERE id = $id
+    ";
+    $resOld = $conn->query($sqlOld);
+
+    $oldFechaReprog = null;
+    if ($resOld && $resOld->num_rows === 1) {
+        $oldFechaReprog = $resOld->fetch_assoc()['fecha_reprogramada'];
+    }
+
+    /* =========================
+       LÓGICA REPROGRAMACIÓN
+       ========================= */
+    if (!empty($fecha_reprogramada)) {
+
+        $estado_id = 3;
+
+    } elseif (!empty($oldFechaReprog)) {
+
+        $fecha_reprogramada = $oldFechaReprog;
+        $estado_id = 3;
+
+    } else {
+
+        $fecha_reprogramada = null;
+    }
+
+    /* =========================
+       UPDATE
+       ========================= */
+    $campos = [];
+
+    $campos[] = "area_id = '$area_id'";
+    $campos[] = "estado_id = '$estado_id'";
+    $campos[] = "actividad = '$actividad'";
+
+    $campos[] = "responsable_nombre = '$responsable_nombre'";
+    $campos[] = "responsable_apellidop = '$responsable_apellidop'";
+    $campos[] = "responsable_apellidom = '$responsable_apellidom'";
+
+    if (!empty($fecha_inicio)) {
+        $campos[] = "fecha_inicio = '$fecha_inicio'";
+    }
+
+    // 🔒 NO borrar fecha_final
+    if (!empty($fecha_final)) {
+        $campos[] = "fecha_final = '$fecha_final'";
+    }
+
+    if ($fecha_reprogramada !== null) {
+        $campos[] = "fecha_reprogramada = '$fecha_reprogramada'";
+    } else {
+        $campos[] = "fecha_reprogramada = NULL";
+    }
+
     $sql = "
-        UPDATE inversiones_seg_inversiones SET
-            area_id              = '$area_id',
-            estado_id            = '$estado_id',
-            {$titulocampobd12}   = '$nombre_resp',
-            {$titulocampobd13}   = '$apep_resp',
-            {$titulocampobd14}   = '$apem_resp',
-            {$titulocampobd6}    = '$actividad',
-            {$titulocampobd7}    = " . ($fecha_inicio ? "'$fecha_inicio'" : "NULL") . ",
-            {$titulocampobd9}    = " . ($fecha_final ? "'$fecha_final'" : "NULL") . "
+        UPDATE inversiones_seg_inversiones
+        SET " . implode(', ', $campos) . "
         WHERE id = '$id'
     ";
 
