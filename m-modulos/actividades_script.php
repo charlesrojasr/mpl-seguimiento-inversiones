@@ -387,7 +387,7 @@
         $('#edit_<?php echo $titulocampobd12; ?>').val(response.responsable_nombre);
         $('#edit_<?php echo $titulocampobd13; ?>').val(response.responsable_apellidop);
         $('#edit_<?php echo $titulocampobd14; ?>').val(response.responsable_apellidom);
-        $('#edit_<?php echo $titulocampobd15; ?>').val(response.fecha_reprogramada_inicio);
+
 
 
 

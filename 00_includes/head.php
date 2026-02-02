@@ -67,7 +67,7 @@ $userImgLog = "";
     }
 
     .estado-sin-iniciar {
-      background-color: rgb(255, 99, 71);
+      background-color: #6b7280;
     }
 
     .estado-atrasado {
