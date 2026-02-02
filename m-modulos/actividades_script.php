@@ -358,6 +358,9 @@
         $("#edit_<?php echo $titulocampobd9; ?>").val(response.fecha_final);
         $("#edit_<?php echo $titulocampobd10; ?>").val(response.estado_name);
         $("#edit_<?php echo $titulocampobd11; ?>").val(response.fecha_reprogramada);
+        $("#edit_<?php echo $titulocampobd12; ?>").val(response.responsable_nombre);
+        $("#edit_<?php echo $titulocampobd13; ?>").val(response.responsable_apellidop);
+        $("#edit_<?php echo $titulocampobd14; ?>").val(response.responsable_apellidom);
       }
     });
   }

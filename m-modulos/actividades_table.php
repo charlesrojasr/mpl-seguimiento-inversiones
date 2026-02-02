@@ -77,7 +77,7 @@
             <tr>
 
                 <th><?php echo $titulocampobd1P; ?></th>
-                <th><?php echo $titulocampobd2P; ?></th>
+                <th hidden><?php echo $titulocampobd2P; ?></th>
                 <th><?php echo $titulocampobd3P; ?></th>
                 <th><?php echo $titulocampobd4P; ?></th>
                 <th><?php echo $titulocampobd5P; ?></th>
@@ -96,18 +96,30 @@
                     <td>
                         <?php echo $motoTaxy["$titulocampobd1"]; ?>
                         <button class="btn btn-primary btn-block edit" data-id="<?php echo $motoTaxy[$titulocampobd1]; ?>">
-                            <i class="fa-solid fa-pen-to-square"></i> Editar Actividad
+                            <i class="fa-solid fa-pen-to-square"></i>
                         </button>
 
                     </td>
-                    <td><?php echo $motoTaxy["$titulocampobd2"]; ?></td>
+                    <td hidden><?php echo $motoTaxy["$titulocampobd2"]; ?></td>
                     <td><?php echo $motoTaxy["$titulocampobd3"]; ?></td>
                     <td><?php echo $motoTaxy["$titulocampobd4"]; ?></td>
                     <td><?php echo $motoTaxy["$titulocampobd5"]; ?></td>
                     <td><?php echo $motoTaxy["$titulocampobd6"]; ?></td>
-                    <td><?php echo $motoTaxy["$titulocampobd7"]; ?></td>
+                    <td style="white-space: nowrap;">
+                        <?php
+                        if (!empty($motoTaxy[$titulocampobd7])) {
+                            echo date('d/m/Y', strtotime($motoTaxy[$titulocampobd7]));
+                        }
+                        ?>
+                    </td>
                     <td><?php echo $motoTaxy["$titulocampobd8"]; ?></td>
-                    <td><?php echo $motoTaxy["$titulocampobd9"]; ?></td>
+                    <td style="white-space: nowrap;">
+                        <?php
+                        if (!empty($motoTaxy[$titulocampobd9])) {
+                            echo date('d/m/Y', strtotime($motoTaxy[$titulocampobd9]));
+                        }
+                        ?>
+                    </td>
                     <td>
                         <?php
                         $estado = $motoTaxy[$titulocampobd10];
@@ -137,7 +149,13 @@
                         </span>
                     </td>
 
-                    <td><?php echo $motoTaxy["$titulocampobd11"]; ?></td>
+                    <td style="white-space: nowrap;">
+                        <?php
+                        if (!empty($motoTaxy[$titulocampobd11])) {
+                            echo date('d/m/Y', strtotime($motoTaxy[$titulocampobd11]));
+                        }
+                        ?>
+                    </td>
 
                 </tr>
 

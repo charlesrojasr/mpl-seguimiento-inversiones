@@ -74,6 +74,9 @@ $titulocampobd8  = 'dias';
 $titulocampobd9  = 'fecha_final';
 $titulocampobd10 = 'estado_name';
 $titulocampobd11 = 'fecha_reprogramada';
+$titulocampobd12  = 'responsable_nombre';
+$titulocampobd13  = 'responsable_apellidop';
+$titulocampobd14  = 'responsable_apellidom';
 
 
 /*
