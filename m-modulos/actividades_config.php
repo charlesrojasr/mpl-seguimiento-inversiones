@@ -2,6 +2,64 @@
 
 include 'config.php'; // Conexión DB
 
+
+/* =========================
+   ALERTAS DE VENCIMIENTO
+   ========================= */
+
+$alertas = [];
+
+$sqlAlertas = "
+SELECT 
+    i.actividad,
+    i.estado_id,
+    p.nombre AS proyecto_name,
+    e.nombre AS etapa_name,
+    a.nombre AS area_name,
+    es.descripcion AS estado_name,
+    i.fecha_final,
+    i.fecha_reprogramada,
+    CASE 
+        WHEN estado_id = 1 THEN DATEDIFF(fecha_final, CURDATE())
+        WHEN estado_id = 3 THEN DATEDIFF(fecha_reprogramada, CURDATE())
+    END AS dias_restantes
+FROM inversiones_seg_inversiones i
+
+LEFT JOIN inversiones_seg_proyecto p 
+    ON i.proyecto_id = p.id
+
+LEFT JOIN inversiones_seg_etapa e 
+    ON i.etapa_id = e.id
+
+LEFT JOIN inversiones_seg_area a 
+    ON i.area_id = a.id
+
+LEFT JOIN inversiones_seg_estado es 
+    ON i.estado_id = es.id
+
+WHERE 
+(
+    estado_id = 1 
+    AND fecha_final IS NOT NULL
+    AND DATEDIFF(fecha_final, CURDATE()) BETWEEN 1 AND 3
+)
+OR
+(
+    estado_id = 3 
+    AND fecha_reprogramada IS NOT NULL
+    AND DATEDIFF(fecha_reprogramada, CURDATE()) BETWEEN 1 AND 3
+)
+";
+
+$resAlertas = $conn->query($sqlAlertas);
+
+while ($row = $resAlertas->fetch_assoc()) {
+    $alertas[] = $row;
+}
+
+
+
+
 $idiomaM = "es";
 
 
@@ -94,3 +152,4 @@ if (!$getAllMotoTaxy) {
 }
 
 ?>
+

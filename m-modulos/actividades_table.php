@@ -95,10 +95,10 @@
                 <tr>
                     <td>
                         <?php echo $motoTaxy["$titulocampobd1"]; ?>
-                        <button style="margin-top: 0px;margin-bottom: 10px; width: 35px; "
-                            class="btn btn-primary btn-block w-100 edit" data-id="<?php echo $motoTaxy["$titulocampobd1"]; ?>"
-                            onclick="funcionX(<?php echo $motoTaxy["$titulocampobd1"]; ?>)"><i
-                                class="fa-solid fa-pen-to-square"></i>Editar Actividad</button>
+                        <button class="btn btn-primary btn-block edit" data-id="<?php echo $motoTaxy[$titulocampobd1]; ?>">
+                            <i class="fa-solid fa-pen-to-square"></i> Editar Actividad
+                        </button>
+
                     </td>
                     <td><?php echo $motoTaxy["$titulocampobd2"]; ?></td>
                     <td><?php echo $motoTaxy["$titulocampobd3"]; ?></td>
@@ -108,7 +108,35 @@
                     <td><?php echo $motoTaxy["$titulocampobd7"]; ?></td>
                     <td><?php echo $motoTaxy["$titulocampobd8"]; ?></td>
                     <td><?php echo $motoTaxy["$titulocampobd9"]; ?></td>
-                    <td><?php echo $motoTaxy["$titulocampobd10"]; ?></td>
+                    <td>
+                        <?php
+                        $estado = $motoTaxy[$titulocampobd10];
+
+                        // Normalizamos para evitar errores
+                        $estadoNormalizado = strtolower(trim($estado));
+
+                        $claseEstado = '';
+
+                        switch ($estadoNormalizado) {
+                            case 'completado':
+                                $claseEstado = 'estado-completado';
+                                break;
+
+                            case 'sin iniciar':
+                                $claseEstado = 'estado-sin-iniciar';
+                                break;
+
+                            case 'atrasado':
+                                $claseEstado = 'estado-atrasado';
+                                break;
+                        }
+                        ?>
+
+                        <span class="estado-pill <?php echo $claseEstado; ?>">
+                            <?php echo htmlspecialchars($estado); ?>
+                        </span>
+                    </td>
+
                     <td><?php echo $motoTaxy["$titulocampobd11"]; ?></td>
 
                 </tr>
@@ -117,8 +145,3 @@
             <?php } ?>
         </tbody>
     </table>
-
-
-
-
-

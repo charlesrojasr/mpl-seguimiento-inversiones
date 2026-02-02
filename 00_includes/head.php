@@ -2,11 +2,11 @@
 <html lang="<?php echo $idiomaM; ?>">
 
 
-<?php 
- $appName = "SEGUIMIENTO DE INVERSIONES"; 
- $appLogoImg = "https://portal.muniplibre.gob.pe/wp-content/uploads/2024/04/image-1.png";
- $userLog = "Municipalidad Distrital de Pueblo Libre";
- $userImgLog = "";
+<?php
+$appName = "SEGUIMIENTO DE INVERSIONES";
+$appLogoImg = "https://portal.muniplibre.gob.pe/wp-content/uploads/2024/04/image-1.png";
+$userLog = "Municipalidad Distrital de Pueblo Libre";
+$userImgLog = "";
 ?>
 
 <head>
@@ -35,22 +35,53 @@
   <!-- summernote -->
   <link rel="stylesheet" href="../plugins/summernote/summernote-bs4.min.css">
 
-    <!-- SweetAlert2 -->
+  <!-- SweetAlert2 -->
   <link rel="stylesheet" href="../plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
   <!-- Toastr -->
   <link rel="stylesheet" href="../plugins/toastr/toastr.min.css">
 
 
- <!-- DataTables -->
+  <!-- DataTables -->
   <link rel="stylesheet" href="../plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
   <link rel="stylesheet" href="../plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
   <link rel="stylesheet" href="../plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
 
-  
 
-  
+
+  <style>
+    .estado-pill {
+      padding: 6px 18px;
+      border-radius: 18px;
+      color: #ffffff;
+      font-size: 13px;
+      font-weight: 600;
+      border: none;
+      display: inline-block;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    /* Estados */
+    .estado-completado {
+      background-color: rgb(16, 185, 129);
+    }
+
+    .estado-sin-iniciar {
+      background-color: rgb(255, 99, 71);
+    }
+
+    .estado-atrasado {
+      background-color: #8b0000;
+    }
+
+    /* Fallback */
+    .estado-default {
+      background-color: #6b7280;
+      /* gris */
+    }
+  </style>
 
 
   <script src="https://kit.fontawesome.com/f13b20fd25.js" crossorigin="anonymous"></script>
-  
+
 </head>

@@ -5,6 +5,7 @@ if (session_status() === PHP_SESSION_NONE) {
 
 include '../00_includes/conn.php';
 
+
 $idiomaM = "es";
 
 $appModulo = "SEGUIMIENTO DE INVERSIONES"; 
