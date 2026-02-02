@@ -51,21 +51,24 @@ if (isset($_POST['edit'])) {
     }
 
     /* =========================
-       LÓGICA REPROGRAMACIÓN
-       ========================= */
-    if (!empty($fecha_reprogramada)) {
+   LÓGICA REPROGRAMACIÓN (FIX)
+   ========================= */
 
-        $estado_id = 3;
+    // Detectar si el usuario realmente cambió la fecha
+    $reprogramo = false;
 
-    } elseif (!empty($oldFechaReprog)) {
-
-        $fecha_reprogramada = $oldFechaReprog;
-        $estado_id = 3;
-
-    } else {
-
-        $fecha_reprogramada = null;
+    if (!empty($fecha_reprogramada) && $fecha_reprogramada !== $oldFechaReprog) {
+        $reprogramo = true;
     }
+
+    // Solo si reprograma, forzamos estado = 3
+    if ($reprogramo) {
+        $estado_id = 3;
+    }
+
+    // Si NO reprograma:
+    // - se respeta el estado enviado por el formulario
+    // - NO se pisa $estado_id
 
     /* =========================
        UPDATE
@@ -101,13 +104,14 @@ if (isset($_POST['edit'])) {
         WHERE id = '$id'
     ";
 
+
+
     if ($conn->query($sql)) {
 
         echo "<script>
             alert('Actividad actualizada correctamente');
             window.location = 'actividades.php';
         </script>";
-
     } else {
 
         echo "<script>

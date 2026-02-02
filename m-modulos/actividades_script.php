@@ -387,6 +387,7 @@
         $('#edit_<?php echo $titulocampobd12; ?>').val(response.responsable_nombre);
         $('#edit_<?php echo $titulocampobd13; ?>').val(response.responsable_apellidop);
         $('#edit_<?php echo $titulocampobd14; ?>').val(response.responsable_apellidom);
+        $('#edit_<?php echo $titulocampobd15; ?>').val(response.fecha_reprogramada);
 
 
 
@@ -418,15 +419,12 @@
           let dias = parseInt(act.dias_restantes);
           let alerta = '';
 
-          switch (dias) {
-            case 0:
-              alerta = '<span style="color:red;"><b>VENCE HOY</b></span>';
-              break;
-            case 1:
-              alerta = '<span style="color:#e67e22;"><b>Vence en 1 día</b></span>';
-              break;
-            default:
-              alerta = '<span style="color:#f1c40f;"><b>Vence en ' + dias + ' días</b></span>';
+          if (dias <= 0) {
+            alerta = '<span style="color:red;"><b>VENCE HOY</b></span>';
+          } else if (dias === 1) {
+            alerta = '<span style="color:#e67e22;"><b>Vence en 1 día</b></span>';
+          } else {
+            alerta = '<span style="color:#f1c40f;"><b>Vence en ' + dias + ' días</b></span>';
           }
 
           let fechaVence = '';
@@ -602,52 +600,52 @@
 </script>
 
 <script>
-function guardarFiltrosActuales() {
-  const filtros = {
-    proyecto: $('#proyectoFiltro').val(),
-    etapa: $('#etapaFiltro').val(),
-    area: $('#areaFiltro').val(),
-    estado: $('#estadoFiltro').val()
-  };
+  function guardarFiltrosActuales() {
+    const filtros = {
+      proyecto: $('#proyectoFiltro').val(),
+      etapa: $('#etapaFiltro').val(),
+      area: $('#areaFiltro').val(),
+      estado: $('#estadoFiltro').val()
+    };
 
-  localStorage.setItem('filtrosActividades', JSON.stringify(filtros));
-}
+    localStorage.setItem('filtrosActividades', JSON.stringify(filtros));
+  }
 </script>
 
 <script>
-$(window).on('load', function () {
+  $(window).on('load', function() {
 
-  const filtrosGuardados = localStorage.getItem('filtrosActividades');
+    const filtrosGuardados = localStorage.getItem('filtrosActividades');
 
-  if (!filtrosGuardados) return;
+    if (!filtrosGuardados) return;
 
-  const filtros = JSON.parse(filtrosGuardados);
+    const filtros = JSON.parse(filtrosGuardados);
 
-  // Restaurar filtro principal
-  if (filtros.proyecto) {
-    $('#proyectoFiltro').val(filtros.proyecto);
-    buscarTabla();
-  }
-
-  // Esperar a que se carguen los filtros secundarios
-  setTimeout(function () {
-
-    if (filtros.etapa) {
-      $('#etapaFiltro').val(filtros.etapa).trigger('change');
+    // Restaurar filtro principal
+    if (filtros.proyecto) {
+      $('#proyectoFiltro').val(filtros.proyecto);
+      buscarTabla();
     }
 
-    if (filtros.area) {
-      $('#areaFiltro').val(filtros.area).trigger('change');
-    }
+    // Esperar a que se carguen los filtros secundarios
+    setTimeout(function() {
 
-    if (filtros.estado) {
-      $('#estadoFiltro').val(filtros.estado).trigger('change');
-    }
+      if (filtros.etapa) {
+        $('#etapaFiltro').val(filtros.etapa).trigger('change');
+      }
 
-    // Limpiar storage (opcional pero recomendado)
-    localStorage.removeItem('filtrosActividades');
+      if (filtros.area) {
+        $('#areaFiltro').val(filtros.area).trigger('change');
+      }
 
-  }, 300);
+      if (filtros.estado) {
+        $('#estadoFiltro').val(filtros.estado).trigger('change');
+      }
 
-});
+      // Limpiar storage (opcional pero recomendado)
+      localStorage.removeItem('filtrosActividades');
+
+    }, 300);
+
+  });
 </script>

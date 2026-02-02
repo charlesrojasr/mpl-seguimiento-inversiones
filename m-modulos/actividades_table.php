@@ -89,6 +89,7 @@
                 <th><?php echo $titulocampobd8P; ?></th>
                 <th><?php echo $titulocampobd9P; ?></th>
                 <th><?php echo $titulocampobd10P; ?></th>
+                <th><?php echo $titulocampobd15P; ?></th>
                 <th><?php echo $titulocampobd11P; ?></th>
 
             </tr>
@@ -150,6 +151,14 @@
                         <span class="estado-pill <?php echo $claseEstado; ?>">
                             <?php echo htmlspecialchars($estado); ?>
                         </span>
+                    </td>
+
+                    <td style="white-space: nowrap;">
+                        <?php if (!empty($motoTaxy[$titulocampobd15])): ?>
+                            <span class="estado-pill" style="background:#de0707;">
+                                <?php echo date('d/m/Y', strtotime($motoTaxy[$titulocampobd15])); ?>
+                            </span>
+                        <?php endif; ?>
                     </td>
 
                     

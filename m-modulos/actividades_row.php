@@ -28,7 +28,8 @@ if (isset($_POST['id'])) {
         i.fecha_inicio,
         i.fecha_final,
         i.dias,
-        i.fecha_reprogramada
+        i.fecha_reprogramada,
+        i.fecha_reprogramada_inicio
     FROM inversiones_seg_inversiones i
     LEFT JOIN inversiones_seg_proyecto p ON i.proyecto_id = p.id
     LEFT JOIN inversiones_seg_etapa e ON i.etapa_id = e.id

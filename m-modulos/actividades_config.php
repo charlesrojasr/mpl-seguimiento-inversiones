@@ -2,11 +2,6 @@
 
 include 'config.php'; // Conexión DB
 
-
-/* =========================
-   ALERTAS DE VENCIMIENTO
-   ========================= */
-
 $alertas = [];
 
 $sqlAlertas = "SELECT 
@@ -22,37 +17,37 @@ $sqlAlertas = "SELECT
     es.descripcion AS estado_name,
     i.fecha_final,
     i.fecha_reprogramada,
+    i.fecha_reprogramada_inicio,
+
     CASE 
-        WHEN estado_id = 1 THEN DATEDIFF(fecha_final, CURDATE())
-        WHEN estado_id = 3 THEN DATEDIFF(fecha_reprogramada, CURDATE())
+        WHEN i.estado_id = 1 THEN DATEDIFF(i.fecha_final, CURDATE())
+        WHEN i.estado_id = 3 THEN DATEDIFF(i.fecha_reprogramada, CURDATE())
     END AS dias_restantes
+
 FROM inversiones_seg_inversiones i
 
 LEFT JOIN inversiones_seg_proyecto p 
     ON i.proyecto_id = p.id
-
 LEFT JOIN inversiones_seg_etapa e 
     ON i.etapa_id = e.id
-
 LEFT JOIN inversiones_seg_area a 
     ON i.area_id = a.id
-
 LEFT JOIN inversiones_seg_estado es 
     ON i.estado_id = es.id
 
 WHERE 
 (
-    estado_id = 1 
-    AND fecha_final IS NOT NULL
-    AND DATEDIFF(fecha_final, CURDATE()) BETWEEN 1 AND 3
+    i.estado_id = 1
+    AND i.fecha_final IS NOT NULL
+    AND DATEDIFF(i.fecha_final, CURDATE()) BETWEEN 0 AND 3
 )
 OR
 (
-    estado_id = 3 
-    AND fecha_reprogramada IS NOT NULL
-    AND DATEDIFF(fecha_reprogramada, CURDATE()) BETWEEN 1 AND 3
-)
-";
+    i.estado_id = 3
+    AND i.fecha_reprogramada IS NOT NULL
+    AND DATEDIFF(i.fecha_reprogramada, CURDATE()) BETWEEN 0 AND 3
+);";
+
 
 $resAlertas = $conn->query($sqlAlertas);
 
@@ -80,6 +75,7 @@ $titulocampobd11 = 'fecha_reprogramada';
 $titulocampobd12  = 'responsable_nombre';
 $titulocampobd13  = 'responsable_apellidop';
 $titulocampobd14  = 'responsable_apellidom';
+$titulocampobd15  = 'fecha_reprogramada_inicio';
 
 
 /*
@@ -99,6 +95,7 @@ $titulocampobd8P  = 'Días';
 $titulocampobd9P  = 'Fecha Final';
 $titulocampobd10P = 'Estado';
 $titulocampobd11P = 'Fecha Fin Reprogramada';
+$titulocampobd15P = 'Fecha Inicio Reprogramada';
 
 
 /*
@@ -128,7 +125,8 @@ $sql = "SELECT
     i.fecha_inicio,
     i.fecha_final,
     i.dias,
-    i.fecha_reprogramada
+    i.fecha_reprogramada,
+    i.fecha_reprogramada_inicio
 
 FROM inversiones_seg_inversiones i
 
