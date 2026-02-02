@@ -2,15 +2,15 @@
 include '../00_includes/conn.php';
 
 // Datos del usuario a insertar
-$username = 'hperez'; // Cambia el nombre de usuario aquí
-$password = '07795707'; // Cambia la contraseña aquí
-$role_id = 3; // Asignar el rol de administrador (ID 1)
+$username = 'atello'; // Cambia el nombre de usuario aquí
+$password = '10688639'; // Cambia la contraseña aquí
+$role_id = 1; // Asignar el rol de administrador (ID 1)
 
 // Encriptar la contraseña
 $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
 // Preparar la consulta
-$stmt = $conn->prepare("INSERT INTO dashboard_seg_users (username, password, role_id) VALUES (?, ?, ?)");
+$stmt = $conn->prepare("INSERT INTO inversiones_seg_users (username, password, role_id) VALUES (?, ?, ?)");
 if (!$stmt) {
     die("Error en la preparación de la consulta: " . $conn->error);
 }

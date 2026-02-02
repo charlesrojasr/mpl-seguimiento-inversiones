@@ -4,6 +4,7 @@
 
 <?php include '../00_includes/head.php' ?>
 
+
 <body class="hold-transition sidebar-mini layout-fixed">
 
   <div class="wrapper">
@@ -32,28 +33,17 @@
   <?php include '../00_includes/footer.php'; ?> 
 
 
-  <?php include 'actividades_modal_add.php'; ?>
-  <?php include 'actividades_modal_add_meses.php'; ?>
-  <?php include 'actividades_modal_add_responsables.php'; ?>
-  <?php include 'actividades_modal_add_checklist.php'; ?>
-  <?php include 'actividades_modal_add_foto.php'; ?>
+  <?php include 'actividades_modal_add.php'; ?>>
   <?php include 'actividades_modal_edit.php'; ?>
-  <?php include 'actividades_modal_edit_meses.php'; ?>
-  <?php include 'actividades_modal_edit_responsables.php'; ?>
-  <?php include 'actividades_modal_edit_checklist.php'; ?>
-  <?php include 'actividades_modal_edit_foto.php'; ?>
-  <?php include 'actividades_modal_edit_actividad.php'; ?>
-  <?php include 'actividades_modal_visor.php'; ?>
+  <?php //include 'actividades_modal_visor.php'; ?>
 
   <?php //include 'listar_autorizaciones_modal_qr.php'; ?>
 
   <?php //include 'index_06_modal_delete.php'; ?>
-  <?php include 'actividades_modal_edit_photo.php'; ?>
-  <?php include 'actividades_modal_edit_photo_.php'; ?>  
 
   <?php include '../00_includes/script.php'; ?>
-  <?php include 'actividades_script.php'; ?>
 
+<?php include 'actividades_script.php'; ?>
   
 
 </body>

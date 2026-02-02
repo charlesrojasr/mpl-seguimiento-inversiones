@@ -15,12 +15,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             u.role_id,
             ua.area_id,
             a.nombre AS area_nombre
-        FROM dashboard_seg_users u
-        LEFT JOIN dashboard_seg_user_areas ua 
+        FROM inversiones_seg_users u
+        LEFT JOIN inversiones_seg_user_areas ua 
                ON ua.user_id = u.id 
               AND ua.estado = 1
               AND ua.es_principal = 1
-        LEFT JOIN dashboard_seg_area a 
+        LEFT JOIN inversiones_seg_area a 
                ON a.id = ua.area_id
         WHERE u.username = ?
         LIMIT 1
@@ -192,7 +192,7 @@ span.psw {
   
   <form class="modal-content animate" action="login.php" method="post">
     <div class="imgcontainer">
-      <h3>DASHBOARD DE ACTIVIDADES</h3>
+      <h3>SEGUIMIENTO DE INVERSIONES</h3>
       <img src="img/logo-mdpl.png" alt="Municipalidad de Pueblo Libre" class="avatar">
     </div>
 

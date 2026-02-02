@@ -3,7 +3,7 @@
 
 
 <?php 
- $appName = "DASHBOARD DE ACTIVIDADES"; 
+ $appName = "SEGUIMIENTO DE INVERSIONES"; 
  $appLogoImg = "https://portal.muniplibre.gob.pe/wp-content/uploads/2024/04/image-1.png";
  $userLog = "Municipalidad Distrital de Pueblo Libre";
  $userImgLog = "";

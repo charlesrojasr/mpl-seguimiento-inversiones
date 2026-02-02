@@ -1,79 +1,96 @@
 <?php
-include 'config.php';   // 👈 ESTO ES CLAVE
 
+include 'config.php'; // Conexión DB
 
 $idiomaM = "es";
 
-$primaryTable = "dashboard_seg_actividad";
 
-$titulocampobd1 = 'id';
-$titulocampobd2 = 'area_nombre';
-$titulocampobd3 = 'actividad';
-
-$titulocampobd8 = 'indicadores';
-$titulocampobd9 = 'meta';
-$titulocampobd10 = 'avance';
-
-$titulocampobd4 = 'detalle';
-$titulocampobd5 = 'porcentaje';
-$titulocampobd6 = 'estado_descripcion';
-$titulocampobd7 = 'fecha_registro';
-
-$titulocampobd11 = 'area_id';
-$titulocampobd12 = 'estado_id';
+$titulocampobd1  = 'id';
+$titulocampobd2  = 'proyecto_name';
+$titulocampobd3  = 'etapa_name';
+$titulocampobd4  = 'area_name';
+$titulocampobd5  = 'responsable_nombre_completo';
+$titulocampobd6  = 'actividad';
+$titulocampobd7  = 'fecha_inicio';
+$titulocampobd8  = 'dias';
+$titulocampobd9  = 'fecha_final';
+$titulocampobd10 = 'estado_name';
+$titulocampobd11 = 'fecha_reprogramada';
 
 
+/*
+|--------------------------------------------------------------------------
+| TITULOS DE TABLA
+|--------------------------------------------------------------------------
+*/
 
-$titulocampobd1P = 'Actividad';
-$titulocampobd2P = 'Área Responsable';
-$titulocampobd3P = 'Actividad Propuesta/Ofrecida';
-$titulocampobd8P = 'Indicadores';
-$titulocampobd9P = 'Meta';
-$titulocampobd10P = 'Avance';
-$titulocampobd4P = 'Detalles Complementarios';
-$titulocampobd5P = 'Porcentaje (avanzado/previsto)';
-$titulocampobd6P = 'Estado';
-$titulocampobd7P = 'Fecha de Registro';
+$titulocampobd1P  = 'Nro';
+$titulocampobd2P  = 'Inversión';
+$titulocampobd3P  = 'Etapa';
+$titulocampobd4P  = 'Unidad Orgánica';
+$titulocampobd5P  = 'Responsable';
+$titulocampobd6P  = 'Actividad';
+$titulocampobd7P  = 'Fecha Inicio';
+$titulocampobd8P  = 'Días';
+$titulocampobd9P  = 'Fecha Final';
+$titulocampobd10P = 'Estado';
+$titulocampobd11P = 'Fecha Reprogramada';
 
 
+/*
+|--------------------------------------------------------------------------
+| CONSULTA PRINCIPAL
+|--------------------------------------------------------------------------
+*/
 
-$modulo_add = "actividades_modal_add_f.php";
-$modulo_edit = "actividades_modal_edit_f.php";
-$modulo_add_meses = "actividades_modal_add_meses_f.php";
+$sql = "SELECT 
+    i.id,
+    i.proyecto_id,
+    p.nombre AS proyecto_name,
+    i.etapa_id,
+    e.nombre AS etapa_name,
+    i.area_id,
+    a.nombre AS area_name,
+    i.estado_id,
+    es.descripcion AS estado_name,
+    CONCAT(
+        COALESCE(i.responsable_nombre, ''),
+        ' ',
+        COALESCE(i.responsable_apellidop, ''),
+        ' ',
+        COALESCE(i.responsable_apellidom, '')
+    ) AS responsable_nombre_completo,
+    i.actividad,
+    i.fecha_inicio,
+    i.fecha_final,
+    i.dias,
+    i.fecha_reprogramada
 
-$sql = "
-SELECT 
-    act.id,
-    act.area_id,
-    ar.nombre AS area_nombre,
-    act.actividad,
-    act.indicadores,
-    act.meta,
-    act.avance,
-    act.detalle,
-    act.porcentaje,
-    act.estado_id,
-    es.descripcion AS estado_descripcion,
-    act.fecha_registro
-FROM dashboard_seg_actividad act
-JOIN dashboard_seg_area ar ON act.area_id = ar.id
-JOIN dashboard_seg_estado es ON act.estado_id = es.id
+FROM inversiones_seg_inversiones i
+
+LEFT JOIN inversiones_seg_proyecto p 
+    ON i.proyecto_id = p.id
+
+LEFT JOIN inversiones_seg_etapa e 
+    ON i.etapa_id = e.id
+
+LEFT JOIN inversiones_seg_area a 
+    ON i.area_id = a.id
+
+LEFT JOIN inversiones_seg_estado es 
+    ON i.estado_id = es.id
+
+ORDER BY 
+    i.proyecto_id ASC,
+    i.etapa_id ASC,
+    i.id ASC
 ";
 
-if ($isAreaUser) {
-    $sql .= " WHERE act.area_id = ?";
+$getAllMotoTaxy = $conn->query($sql);
+
+if (!$getAllMotoTaxy) {
+
+    die("Error en la consulta: " . $conn->error);
 }
-
-$sql .= " ORDER BY act.id DESC";
-
-$stmt = $conn->prepare($sql);
-
-if ($isAreaUser) {
-    $stmt->bind_param("i", $area_id);
-}
-
-$stmt->execute();
-$getAllMotoTaxy = $stmt->get_result();
-
 
 ?>

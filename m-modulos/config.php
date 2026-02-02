@@ -7,9 +7,8 @@ include '../00_includes/conn.php';
 
 $idiomaM = "es";
 
-$appModulo = "DASHBOARD DE ACTIVIDADES"; 
-$appModuloPlural = "Autorizaciones"; 
-$appModuloSingular = "Autorización"; 
+$appModulo = "SEGUIMIENTO DE INVERSIONES"; 
+
 
 // 1️⃣ Validación de sesión
 if (!isset($_SESSION['user_id'], $_SESSION['role_id'])) {
@@ -23,7 +22,7 @@ $area_id = $_SESSION['area_id'] ?? null;
 
 // 3️⃣ Flags de rol (después de asignar)
 $isAdmin    = ($role_id == 1);
-$isAreaUser = ($role_id == 3);
+$isAreaUser = ($role_id == 2);
 
 // 4️⃣ Validación opcional por área
 if ($isAreaUser && empty($area_id)) {
@@ -32,8 +31,8 @@ if ($isAreaUser && empty($area_id)) {
 // Obtener permisos del usuario (data-driven)
 $stmt = $conn->prepare("
     SELECT p.permission_name, p.permission_modulo
-    FROM dashboard_seg_permissions p
-    JOIN dashboard_seg_role_permissions rp
+    FROM inversiones_seg_permissions p
+    JOIN inversiones_seg_role_permissions rp
          ON p.id = rp.permission_id
     WHERE rp.role_id = ?
 ");
