@@ -720,3 +720,175 @@
 
   });
 </script>
+
+<script>
+  /* ===============================
+   BOTON AUDITORIA
+================================ */
+
+  $(document).on('click', '.btn-auditoria', function() {
+
+    let id = $(this).data('id');
+
+    $('#modalAuditoria').modal('show');
+
+    cargarAuditoria(id);
+
+  });
+
+  function formatearFechaSimple(fecha) {
+
+    if (!fecha || fecha === 'null' || fecha === '') return '-';
+
+    let f = new Date(fecha);
+
+    if (isNaN(f.getTime())) return fecha; // por si no es fecha
+
+    let dia = String(f.getDate()).padStart(2, '0');
+    let mes = String(f.getMonth() + 1).padStart(2, '0');
+    let anio = f.getFullYear();
+
+    return `${dia}/${mes}/${anio}`;
+  }
+
+
+
+  /* ===============================
+     CARGAR AUDITORIA AJAX
+  ================================ */
+
+  function cargarAuditoria(id) {
+
+    $.ajax({
+
+      url: 'actividades_auditoria_list.php',
+      type: 'POST',
+
+      data: {
+        id: id
+      },
+
+      dataType: 'json',
+
+      success: function(data) {
+
+        let html = '';
+
+        if (data.length === 0) {
+
+          html = `
+          <tr>
+            <td colspan="8" class="text-center text-muted">
+              No hay registros
+            </td>
+          </tr>
+        `;
+
+        } else {
+
+          data.forEach(function(row) {
+
+            // ===============================
+            // TRANSFORMACIONES
+            // ===============================
+
+            // ACCION
+            let accion = row.accion;
+
+            if (accion === 'UPDATE') {
+              accion = 'REPROGRAMÓ';
+            }
+
+
+            // CAMPO
+            let campo = row.campo;
+
+            if (campo === 'fecha_reprogramada') {
+              campo = 'Fecha Fin Reprogramada';
+            }
+
+            if (campo === 'fecha_reprogramada_inicio') {
+              campo = 'Fecha Inicio Reprogramada';
+            }
+
+
+            // FECHA (-6 horas / formato)
+            let fechaFormateada = '-';
+
+            if (row.fecha) {
+
+              let fechaBD = new Date(row.fecha.replace(' ', 'T'));
+
+              // restar 6 horas
+              fechaBD.setHours(fechaBD.getHours() - 6);
+
+              let dia = String(fechaBD.getDate()).padStart(2, '0');
+              let mes = String(fechaBD.getMonth() + 1).padStart(2, '0');
+              let anio = fechaBD.getFullYear();
+
+              let hora = String(fechaBD.getHours()).padStart(2, '0');
+              let min = String(fechaBD.getMinutes()).padStart(2, '0');
+
+              fechaFormateada = `${dia}/${mes}/${anio} ${hora}:${min}`;
+            }
+
+
+
+            // ===============================
+            // FILA
+            // ===============================
+
+            html += `
+                <tr>
+
+                  <td>${row.id}</td>
+
+                  <td>${row.nombre_completo_usuario ?? '-'}</td>
+
+                  <td>${row.nombre_area ?? '-'}</td>
+
+                  <td><b class="text-primary">${accion}</b></td>
+
+                  <td>${campo}</td>
+
+                  <td>${formatearFechaSimple(row.valor_anterior)}</td>
+
+                  <td>${formatearFechaSimple(row.valor_nuevo)}</td>
+
+
+                  <td>${fechaFormateada}</td>
+
+                </tr>
+              `;
+
+
+          });
+
+        }
+
+        $('#tablaAuditoria tbody').html(html);
+
+
+        // DataTable (solo 1 vez)
+        if (!$.fn.DataTable.isDataTable('#tablaAuditoria')) {
+
+          $('#tablaAuditoria').DataTable({
+
+            responsive: true,
+            paging: true,
+            searching: true,
+            ordering: false,
+            info: true,
+            pageLength: 10,
+            destroy: true
+
+          });
+
+        }
+
+      }
+
+    });
+
+  }
+</script>

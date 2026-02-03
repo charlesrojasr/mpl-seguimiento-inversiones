@@ -35,6 +35,7 @@
 
   <?php include 'actividades_modal_add.php'; ?>>
   <?php include 'actividades_modal_edit.php'; ?>
+  <?php include 'actividades_modal_auditoria.php'; ?>
   <?php //include 'actividades_modal_visor.php'; ?>
 
   <?php //include 'listar_autorizaciones_modal_qr.php'; ?>

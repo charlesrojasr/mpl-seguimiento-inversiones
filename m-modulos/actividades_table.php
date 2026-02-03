@@ -99,9 +99,17 @@
                 <tr>
                     <td>
                         <?php echo $motoTaxy["$titulocampobd1"]; ?>
-                        <button class="btn btn-primary btn-block edit" data-id="<?php echo $motoTaxy[$titulocampobd1]; ?>">
+                        <button class="btn btn-primary btn-block edit mb-1"
+                            data-id="<?php echo $motoTaxy[$titulocampobd1]; ?>">
                             <i class="fa-solid fa-pen-to-square"></i>
                         </button>
+
+                        <button class="btn btn-info btn-block btn-auditoria"
+                            data-id="<?php echo $motoTaxy[$titulocampobd1]; ?>">
+                            <i class="fa-solid fa-clock-rotate-left"></i>
+                        </button>
+
+
 
                     </td>
                     <td hidden><?php echo $motoTaxy["$titulocampobd2"]; ?></td>
@@ -169,7 +177,7 @@
                         <?php endif; ?>
                     </td>
 
-                    
+
 
                     <td style="white-space: nowrap;">
                         <?php if (!empty($motoTaxy[$titulocampobd11])): ?>
