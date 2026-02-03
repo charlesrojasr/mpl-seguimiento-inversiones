@@ -1,8 +1,6 @@
 <?php
 include 'config.php';
-
 include 'actividades_auditoria_helper.php';
-
 
 if (isset($_POST['edit'])) {
 
@@ -52,8 +50,7 @@ if (isset($_POST['edit'])) {
    OBTENER DATOS ANTIGUOS
 ========================= */
 
-    $sqlOld = "
-    SELECT *
+    $sqlOld = "SELECT *
     FROM inversiones_seg_inversiones
     WHERE id = $id
     LIMIT 1
@@ -68,11 +65,6 @@ if (isset($_POST['edit'])) {
     } else {
         die("Registro no encontrado para auditoría.");
     }
-
-
-    /* =========================
-       DETECTAR REPROGRAMACIÓN
-    ========================= */
 
     /* =========================
    CAMPOS A AUDITAR
@@ -122,7 +114,6 @@ if (isset($_POST['edit'])) {
     if ($reprogramo) {
         $estado_id = 4;
     }
-
 
 
     /* =========================
