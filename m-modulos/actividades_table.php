@@ -145,6 +145,14 @@
                             case 'atrasado':
                                 $claseEstado = 'estado-atrasado';
                                 break;
+
+                            case 'en proceso':
+                                $claseEstado = 'estado-enproceso';
+                                break;
+
+                            case 'reprogramado':
+                                $claseEstado = 'estado-programado';
+                                break;
                         }
                         ?>
 

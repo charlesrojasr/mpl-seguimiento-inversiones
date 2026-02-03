@@ -1,8 +1,14 @@
 <?php
 include 'config.php';
 
+include 'actividades_auditoria_helper.php';
+
+
 if (isset($_POST['edit'])) {
 
+    /* =========================
+       FUNCIÓN LIMPIAR
+    ========================= */
     function limpiar($conn, $texto)
     {
         return mysqli_real_escape_string($conn, trim($texto));
@@ -10,12 +16,12 @@ if (isset($_POST['edit'])) {
 
     /* =========================
        ID
-       ========================= */
+    ========================= */
     $id = intval($_POST['id']);
 
     /* =========================
        CAMPOS PRINCIPALES
-       ========================= */
+    ========================= */
     $area_id   = intval($_POST['area_id']);
     $estado_id = intval($_POST['estado_id']);
 
@@ -23,80 +29,149 @@ if (isset($_POST['edit'])) {
 
     /* =========================
        RESPONSABLE
-       ========================= */
+    ========================= */
     $responsable_nombre    = limpiar($conn, $_POST['responsable_nombre'] ?? '');
     $responsable_apellidop = limpiar($conn, $_POST['responsable_apellidop'] ?? '');
     $responsable_apellidom = limpiar($conn, $_POST['responsable_apellidom'] ?? '');
 
     /* =========================
-       FECHAS
-       ========================= */
-    $fecha_inicio       = $_POST['fecha_inicio'] ?? null;
-    $fecha_final        = $_POST['fecha_final'] ?? null;
-    $fecha_reprogramada = $_POST['fecha_reprogramada'] ?? null;
+       FECHAS NORMALES
+    ========================= */
+    $fecha_inicio = $_POST['fecha_inicio'] ?? null;
+    $fecha_final  = $_POST['fecha_final'] ?? null;
 
     /* =========================
-       FECHA REPROGRAMADA ACTUAL
-       ========================= */
+       FECHAS REPROGRAMADAS
+    ========================= */
+    $fecha_reprogramada     = $_POST['fecha_reprogramada'] ?? null;
+    $fecha_inicio_reprog    = $_POST['fecha_reprogramada_inicio'] ?? null;
+
+
+
+    /* =========================
+   OBTENER DATOS ANTIGUOS
+========================= */
+
     $sqlOld = "
-        SELECT fecha_reprogramada
-        FROM inversiones_seg_inversiones
-        WHERE id = $id
-    ";
+    SELECT *
+    FROM inversiones_seg_inversiones
+    WHERE id = $id
+    LIMIT 1
+";
+
     $resOld = $conn->query($sqlOld);
 
-    $oldFechaReprog = null;
+    $oldData = null;
+
     if ($resOld && $resOld->num_rows === 1) {
-        $oldFechaReprog = $resOld->fetch_assoc()['fecha_reprogramada'];
+        $oldData = $resOld->fetch_assoc();
+    } else {
+        die("Registro no encontrado para auditoría.");
     }
 
-    /* =========================
-   LÓGICA REPROGRAMACIÓN (FIX)
-   ========================= */
 
-    // Detectar si el usuario realmente cambió la fecha
+    /* =========================
+       DETECTAR REPROGRAMACIÓN
+    ========================= */
+
+    /* =========================
+   CAMPOS A AUDITAR
+========================= */
+
+    $camposAuditar = [
+        'area_id'                 => $area_id,
+        'estado_id'               => $estado_id,
+        'actividad'               => $actividad,
+
+        'responsable_nombre'      => $responsable_nombre,
+        'responsable_apellidop'   => $responsable_apellidop,
+        'responsable_apellidom'   => $responsable_apellidom,
+
+        'fecha_inicio'            => $fecha_inicio,
+        'fecha_final'             => $fecha_final,
+
+        'fecha_reprogramada'      => $fecha_reprogramada,
+        'fecha_reprogramada_inicio' => $fecha_inicio_reprog
+    ];
+
+
     $reprogramo = false;
 
-    if (!empty($fecha_reprogramada) && $fecha_reprogramada !== $oldFechaReprog) {
+
+    $oldFechaFinReprog     = $oldData['fecha_reprogramada'] ?? null;
+    $oldFechaInicioReprog = $oldData['fecha_reprogramada_inicio'] ?? null;
+
+
+    $oldFechaFinReprog     = $oldData['fecha_reprogramada'] ?? null;
+    $oldFechaInicioReprog = $oldData['fecha_reprogramada_inicio'] ?? null;
+
+
+    // ---- FECHA FIN ----
+    if ((string)$fecha_reprogramada !== (string)$oldFechaFinReprog) {
         $reprogramo = true;
     }
 
-    // Solo si reprograma, forzamos estado = 3
-    if ($reprogramo) {
-        $estado_id = 3;
+    // ---- FECHA INICIO ----
+    if ((string)$fecha_inicio_reprog !== (string)$oldFechaInicioReprog) {
+        $reprogramo = true;
     }
 
-    // Si NO reprograma:
-    // - se respeta el estado enviado por el formulario
-    // - NO se pisa $estado_id
+
+
+    // ---- CAMBIAR ESTADO SOLO SI HUBO CAMBIO ----
+    if ($reprogramo) {
+        $estado_id = 4;
+    }
+
+
 
     /* =========================
-       UPDATE
-       ========================= */
+       ARMAR UPDATE
+    ========================= */
+
     $campos = [];
 
+    // principales
     $campos[] = "area_id = '$area_id'";
     $campos[] = "estado_id = '$estado_id'";
     $campos[] = "actividad = '$actividad'";
 
+    // responsable
     $campos[] = "responsable_nombre = '$responsable_nombre'";
     $campos[] = "responsable_apellidop = '$responsable_apellidop'";
     $campos[] = "responsable_apellidom = '$responsable_apellidom'";
 
+
+    // fechas normales
     if (!empty($fecha_inicio)) {
         $campos[] = "fecha_inicio = '$fecha_inicio'";
     }
 
-    // 🔒 NO borrar fecha_final
     if (!empty($fecha_final)) {
         $campos[] = "fecha_final = '$fecha_final'";
     }
 
-    if ($fecha_reprogramada !== null) {
+
+    // fecha fin reprogramada
+    if (!empty($fecha_reprogramada)) {
         $campos[] = "fecha_reprogramada = '$fecha_reprogramada'";
     } else {
         $campos[] = "fecha_reprogramada = NULL";
     }
+
+
+    // fecha inicio reprogramada
+    if (!empty($fecha_inicio_reprog)) {
+        $campos[] = "fecha_reprogramada_inicio = '$fecha_inicio_reprog'";
+    } else {
+        $campos[] = "fecha_reprogramada_inicio = NULL";
+    }
+
+
+
+    /* =========================
+       EJECUTAR UPDATE
+    ========================= */
 
     $sql = "
         UPDATE inversiones_seg_inversiones
@@ -108,15 +183,38 @@ if (isset($_POST['edit'])) {
 
     if ($conn->query($sql)) {
 
-        echo "<script>
-            alert('Actividad actualizada correctamente');
-            window.location = 'actividades.php';
-        </script>";
-    } else {
+        /* =========================
+       REGISTRAR AUDITORÍA
+    ========================= */
+
+        foreach ($camposAuditar as $campo => $nuevoValor) {
+
+            $valorAnterior = $oldData[$campo] ?? null;
+
+            // Normalizar vacíos
+            if ($valorAnterior === '') $valorAnterior = null;
+            if ($nuevoValor === '')    $nuevoValor    = null;
+
+            // Solo registrar si cambió
+            if ((string)$valorAnterior !== (string)$nuevoValor) {
+
+                registrarAuditoria(
+                    $conn,
+                    'UPDATE',
+                    'inversiones_seg_inversiones',
+                    $id,
+                    $campo,
+                    $valorAnterior,
+                    $nuevoValor,
+                    $area_id // 👈 CLAVE
+                );
+            }
+        }
+
 
         echo "<script>
-            alert('Error al actualizar: {$conn->error}');
-            window.location = 'actividades.php';
-        </script>";
+        alert('Actividad actualizada correctamente');
+        window.location = 'actividades.php';
+    </script>";
     }
 }

@@ -124,38 +124,95 @@
             </div>
           </div>
 
-          <div class="form-group row">
+          <div class="form-group row mt-3">
 
-            <!-- CHECK REPROGRAMAR -->
+            <!-- COLUMNA 1 : CHECKBOX -->
             <div class="col-sm-4">
+
               <div class="form-check mt-4">
                 <input
                   class="form-check-input"
                   type="checkbox"
-                  id="check_reprogramar"
-                  name="check_reprogramar"
-                  value="1">
+                  id="check_reprogramar">
+
                 <label class="form-check-label" for="check_reprogramar">
-                  Reprogramar fecha
+                  ¿Reprogramar?
                 </label>
               </div>
-            </div>
 
-            <!-- FECHA REPROGRAMADA -->
-            <div class="col-sm-4" id="contenedor_fecha_reprogramada" style="display:none;">
-              <label><?php echo $titulocampobd11P; ?></label>
-              <input
-                type="date"
-                name="<?php echo $titulocampobd11; ?>"
-                id="edit_<?php echo $titulocampobd11; ?>"
-                class="form-control">
             </div>
 
 
-           
+            <!-- COLUMNA 2 : RADIOS -->
+            <div class="col-sm-4">
 
+              <div id="contenedor_radios" style="display:none;">
+
+                <label><strong>Tipo de reprogramación</strong></label>
+
+                <!-- AMBAS PRIMERO -->
+                <div class="form-check">
+                  <input class="form-check-input"
+                    type="radio"
+                    name="tipo_reprogramacion"
+                    id="opcion2"
+                    value="ambas">
+
+                  <label class="form-check-label" for="opcion2">
+                    Reprogramar Fecha inicio + Fecha Fin
+                  </label>
+                </div>
+
+                <div class="form-check">
+                  <input class="form-check-input"
+                    type="radio"
+                    name="tipo_reprogramacion"
+                    id="opcion1"
+                    value="solo">
+
+                  <label class="form-check-label" for="opcion1">
+                    Reprogramar Fecha Fin
+                  </label>
+                </div>
+
+
+
+              </div>
+
+            </div>
+
+
+            <!-- COLUMNA 3 : FECHAS -->
+            <div class="col-sm-4">
+
+              <div id="contenedor_fechas" style="display:none;">
+
+                <!-- FECHA FIN -->
+                <div class="mb-2">
+                  <label><?php echo $titulocampobd11P; ?></label>
+                  <input
+                    type="date"
+                    name="<?php echo $titulocampobd11; ?>"
+                    id="edit_<?php echo $titulocampobd11; ?>"
+                    class="form-control">
+                </div>
+
+                <!-- FECHA INICIO -->
+                <div id="contenedor_fecha2" style="display:none;">
+                  <label><?php echo $titulocampobd15P; ?></label>
+                  <input
+                    type="date"
+                    name="<?php echo $titulocampobd15; ?>"
+                    id="edit_<?php echo $titulocampobd15; ?>"
+                    class="form-control">
+                </div>
+
+              </div>
+
+            </div>
 
           </div>
+
 
 
         </div>

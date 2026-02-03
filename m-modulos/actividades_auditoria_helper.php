@@ -28,7 +28,7 @@ function registrarAuditoria(
     $fecha      = date('Y-m-d H:i:s');
 
     $stmt = $conn->prepare("
-        INSERT INTO dashboard_seg_auditoria
+        INSERT INTO inversiones_seg_auditoria
         (usuario_id, area_id, accion, tabla_afectada, registro_id, campo,
          valor_anterior, valor_nuevo, fecha, ip_usuario, user_agent)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)

@@ -74,6 +74,15 @@ $userImgLog = "";
       background-color: #8b0000;
     }
 
+    .estado-enproceso {
+      background-color: #fd7e14;
+    }
+
+    .estado-programado {
+      background-color: rgb(101, 51, 215);
+    }
+
+
     /* Fallback */
     .estado-default {
       background-color: #6b7280;

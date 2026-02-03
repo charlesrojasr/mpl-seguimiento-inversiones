@@ -22,6 +22,8 @@ $sqlAlertas = "SELECT
     CASE 
         WHEN i.estado_id = 1 THEN DATEDIFF(i.fecha_final, CURDATE())
         WHEN i.estado_id = 3 THEN DATEDIFF(i.fecha_reprogramada, CURDATE())
+        WHEN i.estado_id = 4 THEN DATEDIFF(i.fecha_reprogramada, CURDATE())
+        WHEN i.estado_id = 5 THEN DATEDIFF(i.fecha_reprogramada, CURDATE())
     END AS dias_restantes
 
 FROM inversiones_seg_inversiones i
@@ -44,6 +46,18 @@ WHERE
 OR
 (
     i.estado_id = 3
+    AND i.fecha_reprogramada IS NOT NULL
+    AND DATEDIFF(i.fecha_reprogramada, CURDATE()) BETWEEN 0 AND 3
+)
+OR
+(
+    i.estado_id = 4
+    AND i.fecha_reprogramada IS NOT NULL
+    AND DATEDIFF(i.fecha_reprogramada, CURDATE()) BETWEEN 0 AND 3
+)
+OR
+(
+    i.estado_id = 5
     AND i.fecha_reprogramada IS NOT NULL
     AND DATEDIFF(i.fecha_reprogramada, CURDATE()) BETWEEN 0 AND 3
 );";
