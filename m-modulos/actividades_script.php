@@ -7,6 +7,8 @@
 </script>
 
 
+
+
 <script>
   var dt = null;
 
@@ -121,6 +123,10 @@
 
     // Cargar filtros secundarios una sola vez
     cargarFiltrosSecundarios();
+
+    $("#graficaAvance").show();
+    cargarGraficoProyecto($("#proyectoFiltro").val());
+
   }
 
 
@@ -135,6 +141,8 @@
     limpiarTodo();
 
     $("#tablaDatos").hide();
+    $("#graficaAvance").hide();
+
   }
 
 
@@ -172,6 +180,7 @@
     limpiarTodo();
 
     $("#tablaDatos").hide();
+    $("#graficaAvance").hide();
 
   });
 
@@ -890,5 +899,216 @@
 
     });
 
+  }
+</script>
+
+
+<script>
+  let chartAvance = null;
+
+  function renderGrafica(labels, data) {
+
+    const ctx = document.getElementById('line-chart').getContext('2d');
+
+    if (window.chartAvance) {
+      window.chartAvance.destroy();
+    }
+
+    window.chartAvance = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: [{
+          label: 'Avance del Proyecto (%)',
+          data: data,
+          borderColor: '#3bc8db', // celeste medio
+          backgroundColor: 'transparent',
+          tension: 0.3,
+          pointRadius: 4
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: {
+            min: 0,
+            max: 100,
+            ticks: {
+              callback: v => v + '%'
+            }
+          }
+        }
+      }
+    });
+  }
+</script>
+
+<script>
+  function cargarGraficoProyecto(proyecto) {
+
+    $.ajax({
+      url: 'actividades_chart_proyecto.php',
+      type: 'POST',
+      data: {
+        proyecto: proyecto
+      },
+      dataType: 'json',
+
+      success: function(resp) {
+
+        renderGraficaLinea(resp.labels, resp.linea);
+
+        renderDona('dona-etapa-1', resp.donas[1].avance, '#00c0ef');
+        renderDona('dona-etapa-2', resp.donas[2].avance, '#00a65a');
+        renderDona('dona-etapa-3', resp.donas[3].avance, '#f39c12');
+
+      }
+
+    });
+  }
+</script>
+
+<script>
+  function renderGraficaLinea(labels, data) {
+
+    const ctx = document.getElementById('line-chart').getContext('2d');
+
+    if (window.chartLinea) {
+      window.chartLinea.destroy();
+    }
+
+    // 🔥 CLONAR para no mutar el array original
+    let labelsGraf = [...labels];
+    let dataGraf = [...data];
+
+    // 🔥 Forzar punto inicial (0,0) si no existe
+    if (dataGraf.length > 0 && dataGraf[0] > 0) {
+      labelsGraf.unshift('Inicio');
+      dataGraf.unshift(0);
+    }
+
+    const avanceFinal = dataGraf.length ?
+      dataGraf[dataGraf.length - 1].toFixed(1) :
+      0;
+
+    window.chartLinea = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: labelsGraf,
+        datasets: [{
+          label: `Avance del Proyecto (%) = ${avanceFinal}%`,
+          data: dataGraf,
+          borderColor: '#3bc8db',
+          backgroundColor: 'transparent',
+          tension: 0.3,
+          pointRadius: 4
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            labels: {
+              font: {
+                weight: 'bold'
+              }
+            }
+          }
+        },
+        scales: {
+          y: {
+            min: 0,
+            max: 100,
+            ticks: {
+              callback: v => v + '%'
+            }
+          }
+        }
+      }
+    });
+  }
+</script>
+
+
+<script>
+  // 1️⃣ contenedor global (hoisteado)
+  var donaCharts = {};
+
+  // 2️⃣ plugin texto centrado (compatible v2/v3)
+  const doughnutCenterText = {
+    id: 'doughnutCenterText',
+    beforeDraw(chart) {
+
+      if (chart.config.type !== 'doughnut') return;
+
+      const ctx = chart.ctx || chart.chart.ctx;
+      const width = chart.width || chart.chart.width;
+      const height = chart.height || chart.chart.height;
+
+      const dataset = chart.data.datasets[0];
+      if (!dataset || !dataset.data) return;
+
+      const value = Math.round(dataset.data[0]); // 🔥 entero
+
+      ctx.save();
+
+      const fontSize = Math.round(height / 8); // más aire
+      ctx.font = `bold ${fontSize}px Arial`;
+      ctx.fillStyle = '#333333';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+
+      ctx.fillText(value + '%', width / 2, (height / 2) - 4);
+
+      ctx.restore();
+    }
+  };
+
+
+
+  // registrar plugin
+  if (Chart.register) {
+    Chart.register(doughnutCenterText);
+  } else if (Chart.plugins && Chart.plugins.register) {
+    Chart.plugins.register(doughnutCenterText);
+  }
+
+  // 3️⃣ función DONA
+  function renderDona(idCanvas, avance, color) {
+
+    const canvas = document.getElementById(idCanvas);
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+
+    if (donaCharts[idCanvas]) {
+      donaCharts[idCanvas].destroy();
+    }
+
+    donaCharts[idCanvas] = new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        datasets: [{
+          data: [avance, 100 - avance],
+          backgroundColor: [color, '#e6e6e6'],
+          borderWidth: 0
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        cutoutPercentage: 70, // AdminLTE / v2
+        plugins: {
+          legend: {
+            display: false
+          },
+          tooltip: {
+            enabled: false
+          }
+        }
+      }
+    });
   }
 </script>

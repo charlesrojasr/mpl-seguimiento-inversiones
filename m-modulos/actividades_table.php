@@ -41,6 +41,56 @@
 </div>
 
 
+<!-- GRAFICO DE AVANCE POR PROYECTO -->
+<div class="card bg-gradient mb-3" id="graficaAvance" style="display:none;">
+    <div class="card-header border-0">
+        <h3 class="card-title">
+            <i class="fas fa-chart-line mr-1"></i>
+            Avance del Proyecto (%)
+        </h3>
+    </div>
+
+    <div class="card-body">
+        <canvas id="line-chart"
+            style="min-height:250px;height:250px;max-height:250px;max-width:100%;">
+        </canvas>
+    </div>
+
+    <div class="card-footer bg-transparent">
+        <h3 class="card-title">
+            <i class="fas fa-chart-pie mr-1"></i>
+            Avance por Etapa (%)
+        </h3>
+        <div class="row">
+            <div class="col-12 col-md-4 text-center mb-3">
+                <div style="height:160px; position:relative;">
+                    <canvas id="dona-etapa-1"></canvas>
+                </div>
+                <div class="mt-2 font-weight-bold">Requerimiento y actos preparatorios</div>
+            </div>
+
+            <div class="col-12 col-md-4 text-center mb-3">
+                <div style="height:160px; position:relative;">
+                    <canvas id="dona-etapa-2"></canvas>
+                </div>
+                <div class="mt-2 font-weight-bold">Proceso de convocatoria en el SEACE</div>
+            </div>
+
+            <div class="col-12 col-md-4 text-center mb-3">
+                <div style="height:160px; position:relative;">
+                    <canvas id="dona-etapa-3"></canvas>
+                </div>
+                <div class="mt-2 font-weight-bold">Ejecución contractual</div>
+            </div>
+
+
+        </div>
+
+    </div>
+</div>
+
+
+
 <div class="card mt-2" id="filtrosSecundarios" style="display:none;">
     <div class="card-body">
         <div class="row">
