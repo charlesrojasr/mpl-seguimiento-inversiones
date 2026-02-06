@@ -1,4 +1,11 @@
 <script>
+  const USER_ROLE = <?= (int)$_SESSION['role_id'] ?>;
+  const USER_AREA = <?= (int)($_SESSION['area_id'] ?? 0) ?>;
+</script>
+
+
+
+<script>
   const ORDEN_ETAPAS = [
     'Requerimiento y actos preparatorios',
     'Proceso de convocatoria en el SEACE',
@@ -372,6 +379,7 @@
         }
 
         console.log(response);
+        aplicarPermisosEdicion(response.area_id);
 
         $('.empid').val(response.id);
         $('.id_photo').val(response.id);
@@ -1172,55 +1180,140 @@
 </script>
 
 <script>
-$(document).ready(function() {
+  $(document).ready(function() {
 
-  const urlParams = new URLSearchParams(window.location.search);
+    const urlParams = new URLSearchParams(window.location.search);
 
-  if (!urlParams.toString()) return;
+    if (!urlParams.toString()) return;
 
-  const filtros = {
-    proyecto: urlParams.get('proyecto') || '',
-    etapa: urlParams.get('etapa') || '',
-    area: urlParams.get('area') || '',
-    estado: urlParams.get('estado') || ''
-  };
+    const filtros = {
+      proyecto: urlParams.get('proyecto') || '',
+      etapa: urlParams.get('etapa') || '',
+      area: urlParams.get('area') || '',
+      estado: urlParams.get('estado') || ''
+    };
 
-  // Esperar DataTable
-  let espera = setInterval(function() {
+    // Esperar DataTable
+    let espera = setInterval(function() {
 
-    if (window.dt) {
+      if (window.dt) {
 
-      clearInterval(espera);
+        clearInterval(espera);
 
-      // Proyecto
-      if (filtros.proyecto) {
-        $('#proyectoFiltro').val(filtros.proyecto);
+        // Proyecto
+        if (filtros.proyecto) {
+          $('#proyectoFiltro').val(filtros.proyecto);
+        }
+
+        buscarTabla();
+
+        setTimeout(function() {
+
+          if (filtros.etapa) {
+            $('#etapaFiltro').val(filtros.etapa).trigger('change');
+          }
+
+          if (filtros.area) {
+            $('#areaFiltro').val(filtros.area).trigger('change');
+          }
+
+          if (filtros.estado) {
+            $('#estadoFiltro').val(filtros.estado).trigger('change');
+          }
+
+          sessionStorage.removeItem('filtrosURL');
+
+
+        }, 500);
+
       }
 
-      buscarTabla();
+    }, 200);
 
-      setTimeout(function() {
+  });
+</script>
 
-        if (filtros.etapa) {
-          $('#etapaFiltro').val(filtros.etapa).trigger('change');
-        }
+<script>
+  function aplicarPermisosEdicion(areaActividad) {
 
-        if (filtros.area) {
-          $('#areaFiltro').val(filtros.area).trigger('change');
-        }
+    const role = USER_ROLE;
+    const userArea = USER_AREA;
+    const areaAct = parseInt(areaActividad);
 
-        if (filtros.estado) {
-          $('#estadoFiltro').val(filtros.estado).trigger('change');
-        }
+    const esAdmin = (role === 1);
+    const esAreaUser = (role === 2);
 
-        sessionStorage.removeItem('filtrosURL');
+    const puedeEditar =
+      esAdmin ||
+      (esAreaUser && areaAct === userArea);
 
+    if (esAdmin) {
 
-      }, 500);
+      // inputs y textarea
+      $('#edit input, #edit textarea')
+        .prop('readonly', false);
 
+      // selects
+      $('#edit select')
+        .removeClass('select-bloqueado');
+
+      // botón guardar
+      $('#edit button[type="submit"]')
+        .prop('disabled', false);
+
+      return; // ⛔ salir, no aplicar reglas de área
     }
 
-  }, 200);
 
-});
+    /* ===============================
+       RESET GENERAL
+    =============================== */
+
+    // inputs y textarea
+    $('#edit input, #edit textarea')
+      .prop('readonly', true);
+
+    // selects
+    $('#edit select')
+      .addClass('select-bloqueado');
+
+    // botón guardar (por defecto bloqueado)
+    $('#edit button[type="submit"]')
+      .prop('disabled', true);
+
+    /* ===============================
+       PERMITIR EDICIÓN
+    =============================== */
+
+    if (puedeEditar) {
+
+      // inputs / textarea editables
+      $('#edit .editable-area')
+        .prop('readonly', false);
+
+      // selects editables
+      $('#edit select.editable-area')
+        .removeClass('select-bloqueado');
+
+      // botón guardar
+      $('#edit button[type="submit"]')
+        .prop('disabled', false);
+    }
+
+    /* ===============================
+       BOTONES SIEMPRE ACTIVOS
+    =============================== */
+
+    $('#edit .close, #edit button[data-dismiss="modal"]')
+      .prop('disabled', false);
+  }
 </script>
+
+<style>
+  .select-bloqueado {
+    pointer-events: none;
+    /* no se puede interactuar */
+    background-color: #e9ecef;
+    opacity: 1;
+  }
+</style>

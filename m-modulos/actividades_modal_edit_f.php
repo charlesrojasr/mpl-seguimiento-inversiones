@@ -20,8 +20,9 @@ if (isset($_POST['edit'])) {
     /* =========================
        CAMPOS PRINCIPALES
     ========================= */
-    $area_id   = intval($_POST['area_id']);
-    $estado_id = intval($_POST['estado_id']);
+    $area_id   = isset($_POST['area_id']) ? intval($_POST['area_id']) : $oldData['area_id'];
+    $estado_id = isset($_POST['estado_id']) ? intval($_POST['estado_id']) : $oldData['estado_id'];
+
 
     $actividad = limpiar($conn, $_POST['actividad'] ?? '');
 
@@ -126,8 +127,14 @@ if (isset($_POST['edit'])) {
     $campos = [];
 
     // principales
-    $campos[] = "area_id = '$area_id'";
-    $campos[] = "estado_id = '$estado_id'";
+    if ($area_id !== null) {
+        $campos[] = "area_id = '$area_id'";
+    }
+
+    if ($estado_id !== null) {
+        $campos[] = "estado_id = '$estado_id'";
+    }
+
     $campos[] = "actividad = '$actividad'";
     $campos[] = "observacion = '$observacion'";
 
@@ -222,5 +229,5 @@ if (isset($_POST['edit'])) {
             window.location = 'actividades.php?' + params;
 
             </script>";
-                }
+    }
 }

@@ -46,7 +46,7 @@
               <input type="text"
                 name="<?php echo $titulocampobd12; ?>"
                 id="edit_<?php echo $titulocampobd12; ?>"
-                class="form-control"
+                class="form-control editable-area"
                 oninput="soloLetras(this)">
             </div>
 
@@ -55,7 +55,7 @@
               <input type="text"
                 name="<?php echo $titulocampobd13; ?>"
                 id="edit_<?php echo $titulocampobd13; ?>"
-                class="form-control"
+                class="form-control editable-area"
                 oninput="soloLetras(this)">
             </div>
 
@@ -64,7 +64,7 @@
               <input type="text"
                 name="<?php echo $titulocampobd14; ?>"
                 id="edit_<?php echo $titulocampobd14; ?>"
-                class="form-control"
+                class="form-control editable-area"
                 oninput="soloLetras(this)">
             </div>
 
@@ -112,7 +112,7 @@
 
             <div class="col-sm-4">
               <label><?php echo $titulocampobd10P; ?></label>
-              <select name="estado_id" id="edit_estado_id" class="form-control" required>
+              <select name="estado_id" id="edit_estado_id" class="form-control editable-area" required>
                 <option value="">SELECCIONAR</option>
                 <?php
                 $estados = obtenerEstados();
@@ -131,7 +131,7 @@
 
               <div class="form-check mt-4">
                 <input
-                  class="form-check-input"
+                  class="form-check-input editable-area"
                   type="checkbox"
                   id="check_reprogramar">
 
@@ -152,25 +152,25 @@
 
                 <!-- AMBAS PRIMERO -->
                 <div class="form-check">
-                  <input class="form-check-input"
+                  <input class="form-check-input editable-area"
                     type="radio"
                     name="tipo_reprogramacion"
                     id="opcion2"
                     value="ambas">
 
-                  <label class="form-check-label" for="opcion2">
+                  <label class="form-check-label editable-area" for="opcion2">
                     Reprogramar Fecha inicio + Fecha Fin
                   </label>
                 </div>
 
                 <div class="form-check">
-                  <input class="form-check-input"
+                  <input class="form-check-input editable-area"
                     type="radio"
                     name="tipo_reprogramacion"
                     id="opcion1"
                     value="solo">
 
-                  <label class="form-check-label" for="opcion1">
+                  <label class="form-check-label editable-area" for="opcion1">
                     Reprogramar Fecha Fin
                   </label>
                 </div>
@@ -194,7 +194,7 @@
                     type="date"
                     name="<?php echo $titulocampobd11; ?>"
                     id="edit_<?php echo $titulocampobd11; ?>"
-                    class="form-control">
+                    class="form-control editable-area">
                 </div>
 
                 <!-- FECHA INICIO -->
@@ -204,7 +204,7 @@
                     type="date"
                     name="<?php echo $titulocampobd15; ?>"
                     id="edit_<?php echo $titulocampobd15; ?>"
-                    class="form-control">
+                    class="form-control editable-area">
                 </div>
 
               </div>
@@ -225,17 +225,17 @@
               <textarea
                 name="<?php echo $titulocampobd16; ?>"
                 id="edit_<?php echo $titulocampobd16; ?>"
-                class="form-control mb-2"
+                class="form-control editable-area mb-2"
                 rows="3"
                 placeholder="Ingrese observación de la reprogramación"></textarea>
 
               <!-- BOTON LIMPIAR -->
               <button
                 type="button"
-                class="btn btn-sm btn-outline-secondary"
+                class="btn btn-sm btn-outline-secondary editable-area"
                 id="btn_limpiar_observacion">
 
-                <i class="fa fa-eraser"></i> Limpiar observación
+                <i class="fa fa-eraser "></i> Limpiar observación
 
               </button>
 

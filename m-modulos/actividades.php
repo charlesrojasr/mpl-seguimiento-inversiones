@@ -1,6 +1,11 @@
+
+
 <?php include 'config.php' ?>
 
+
+
 <?php include 'actividades_config.php' ?>
+
 
 <?php include '../00_includes/head.php' ?>
 
@@ -9,9 +14,9 @@
 
   <div class="wrapper">
     <!-- Preloader -->
-    <?php /* include '../00_includes/preloader.php';*/ ?>  
+    <?php /* include '../00_includes/preloader.php';*/ ?>
     <!-- Navbar -->
-    <?php include '../00_includes/menu_superior.php'; ?>  
+    <?php include '../00_includes/menu_superior.php'; ?>
     <!-- /.navbar -->
     <!-- Main Sidebar Container -->
     <?php include '../00_includes/menu_lateral_izquierdo.php'; ?>
@@ -30,22 +35,26 @@
   </div>
   <!-- ./wrapper -->
 
-  <?php include '../00_includes/footer.php'; ?> 
+  <?php include '../00_includes/footer.php'; ?>
 
 
   <?php include 'actividades_modal_add.php'; ?>>
   <?php include 'actividades_modal_edit.php'; ?>
   <?php include 'actividades_modal_auditoria.php'; ?>
-  <?php //include 'actividades_modal_visor.php'; ?>
+  <?php //include 'actividades_modal_visor.php'; 
+  ?>
 
-  <?php //include 'listar_autorizaciones_modal_qr.php'; ?>
+  <?php //include 'listar_autorizaciones_modal_qr.php'; 
+  ?>
 
-  <?php //include 'index_06_modal_delete.php'; ?>
+  <?php //include 'index_06_modal_delete.php'; 
+  ?>
 
   <?php include '../00_includes/script.php'; ?>
 
-<?php include 'actividades_script.php'; ?>
-  
+  <?php include 'actividades_script.php'; ?>
+
 
 </body>
+
 </html>
