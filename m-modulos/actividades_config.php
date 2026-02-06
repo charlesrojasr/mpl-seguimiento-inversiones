@@ -18,6 +18,7 @@ $sqlAlertas = "SELECT
     i.fecha_final,
     i.fecha_reprogramada,
     i.fecha_reprogramada_inicio,
+    i.observacion,
 
     CASE 
         WHEN i.estado_id = 1 THEN DATEDIFF(i.fecha_final, CURDATE())
@@ -90,6 +91,7 @@ $titulocampobd12  = 'responsable_nombre';
 $titulocampobd13  = 'responsable_apellidop';
 $titulocampobd14  = 'responsable_apellidom';
 $titulocampobd15  = 'fecha_reprogramada_inicio';
+$titulocampobd16  = 'observacion';
 
 
 /*
@@ -110,6 +112,7 @@ $titulocampobd9P  = 'Fecha Final';
 $titulocampobd10P = 'Estado';
 $titulocampobd11P = 'Fecha Fin Reprogramada';
 $titulocampobd15P = 'Fecha Inicio Reprogramada';
+$titulocampobd16P = 'Observación';
 
 
 /*
@@ -140,7 +143,8 @@ $sql = "SELECT
     i.fecha_final,
     i.dias,
     i.fecha_reprogramada,
-    i.fecha_reprogramada_inicio
+    i.fecha_reprogramada_inicio,
+    i.observacion
 
 FROM inversiones_seg_inversiones i
 

@@ -213,6 +213,37 @@
 
           </div>
 
+          <!-- FILA OBSERVACION REPROGRAMACION -->
+          <div class="form-group row mt-3" id="row_observacion_reprog" style="display:none;">
+
+            <div class="col-sm-12">
+
+              <label>
+                <?php echo $titulocampobd16P ?? 'Observación'; ?>
+              </label>
+
+              <textarea
+                name="<?php echo $titulocampobd16; ?>"
+                id="edit_<?php echo $titulocampobd16; ?>"
+                class="form-control mb-2"
+                rows="3"
+                placeholder="Ingrese observación de la reprogramación"></textarea>
+
+              <!-- BOTON LIMPIAR -->
+              <button
+                type="button"
+                class="btn btn-sm btn-outline-secondary"
+                id="btn_limpiar_observacion">
+
+                <i class="fa fa-eraser"></i> Limpiar observación
+
+              </button>
+
+            </div>
+
+          </div>
+
+
 
 
         </div>

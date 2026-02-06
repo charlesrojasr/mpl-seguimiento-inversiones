@@ -397,6 +397,7 @@
         $('#edit_<?php echo $titulocampobd13; ?>').val(response.responsable_apellidop);
         $('#edit_<?php echo $titulocampobd14; ?>').val(response.responsable_apellidom);
         $('#edit_<?php echo $titulocampobd15; ?>').val(response.fecha_reprogramada_inicio);
+        $('#edit_<?php echo $titulocampobd16; ?>').val(response.observacion);
 
 
 
@@ -502,19 +503,27 @@
 
 <script>
   function guardarFiltrosActuales() {
+
     const filtros = {
-      proyecto: $('#proyectoFiltro').val(),
-      etapa: $('#etapaFiltro').val(),
-      area: $('#areaFiltro').val(),
-      estado: $('#estadoFiltro').val()
+      proyecto: $('#proyectoFiltro').val() || '',
+      etapa: $('#etapaFiltro').val() || '',
+      area: $('#areaFiltro').val() || '',
+      estado: $('#estadoFiltro').val() || ''
     };
 
+    // Guardar en localStorage (backup)
     localStorage.setItem('filtrosActividades', JSON.stringify(filtros));
+
+    // Convertir en query string
+    const params = new URLSearchParams(filtros).toString();
+
+    // Guardar también en sessionStorage
+    sessionStorage.setItem('filtrosURL', params);
   }
 </script>
 
 <script>
-  $(window).on('load', function() {
+  $(document).ready(function() {
 
     const filtrosGuardados = localStorage.getItem('filtrosActividades');
 
@@ -522,31 +531,44 @@
 
     const filtros = JSON.parse(filtrosGuardados);
 
-    // Restaurar filtro principal
-    if (filtros.proyecto) {
-      $('#proyectoFiltro').val(filtros.proyecto);
-      buscarTabla();
-    }
+    // Esperar a DataTable
+    let espera = setInterval(function() {
 
-    // Esperar a que se carguen los filtros secundarios
-    setTimeout(function() {
+      if (window.dt) {
 
-      if (filtros.etapa) {
-        $('#etapaFiltro').val(filtros.etapa).trigger('change');
+        clearInterval(espera);
+
+        // Filtro principal
+        if (filtros.proyecto) {
+          $('#proyectoFiltro').val(filtros.proyecto);
+        }
+
+        // Ejecutar búsqueda principal
+        buscarTabla();
+
+        // Esperar filtros secundarios
+        setTimeout(function() {
+
+          if (filtros.etapa) {
+            $('#etapaFiltro').val(filtros.etapa).trigger('change');
+          }
+
+          if (filtros.area) {
+            $('#areaFiltro').val(filtros.area).trigger('change');
+          }
+
+          if (filtros.estado) {
+            $('#estadoFiltro').val(filtros.estado).trigger('change');
+          }
+
+          // Limpiar storage
+          localStorage.removeItem('filtrosActividades');
+
+        }, 500);
+
       }
 
-      if (filtros.area) {
-        $('#areaFiltro').val(filtros.area).trigger('change');
-      }
-
-      if (filtros.estado) {
-        $('#estadoFiltro').val(filtros.estado).trigger('change');
-      }
-
-      // Limpiar storage (opcional pero recomendado)
-      localStorage.removeItem('filtrosActividades');
-
-    }, 300);
+    }, 200);
 
   });
 </script>
@@ -556,7 +578,6 @@
 
     const ESTADOS_REPROGRAMADOS = [3, 4, 5];
 
-
     const $modal = $('#edit');
 
     const $check = $('#check_reprogramar');
@@ -564,7 +585,7 @@
     const $radios = $('#contenedor_radios');
     const $fechas = $('#contenedor_fechas');
 
-    const $opAmbas = $('#opcion2'); // ambas = primero
+    const $opAmbas = $('#opcion2');
     const $opSolo = $('#opcion1');
 
     const $fechaFin = $('#edit_<?php echo $titulocampobd11; ?>');
@@ -573,6 +594,11 @@
     const $contFecha2 = $('#contenedor_fecha2');
 
     const $estado = $('#edit_estado_id');
+
+    /* OBSERVACION */
+    const $rowObs = $('#row_observacion_reprog');
+    const $obs = $('#edit_<?php echo $titulocampobd16; ?>');
+    const $btnLimpiar = $('#btn_limpiar_observacion');
 
 
     /* ===============================
@@ -603,6 +629,8 @@
 
         $radios.slideDown();
         $fechas.slideDown();
+        $rowObs.slideDown();
+
 
         // guardar estado original
         if (!$estado.data('original')) {
@@ -610,11 +638,9 @@
         }
 
         // forzar estado
-        // solo forzar si NO es ya reprog
         if (!ESTADOS_REPROGRAMADOS.includes(parseInt($estado.val()))) {
           $estado.val(3);
         }
-
 
         controlarFechas();
 
@@ -635,7 +661,7 @@
       // checkbox
       $check.prop('checked', false);
 
-      // radios (por defecto: SOLO)
+      // radios
       $opSolo.prop('checked', true);
       $opAmbas.prop('checked', false);
 
@@ -643,10 +669,14 @@
       $fechaFin.val('');
       $fechaInicio.val('');
 
+      // observacion
+      $obs.val('');
+
       // ocultar
       $radios.hide();
       $fechas.hide();
       $contFecha2.hide();
+      $rowObs.hide();
 
       // restaurar estado
       if ($estado.data('original')) {
@@ -655,6 +685,30 @@
       }
 
     }
+
+
+    /* ===============================
+       BOTON LIMPIAR OBS
+    =============================== */
+    $btnLimpiar.on('click', function() {
+
+      Swal.fire({
+        title: '¿Limpiar observación?',
+        text: 'Se borrará el contenido actual',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, limpiar',
+        cancelButtonText: 'Cancelar',
+        confirmButtonColor: '#d33'
+      }).then((result) => {
+
+        if (result.isConfirmed) {
+          $obs.val('');
+        }
+
+      });
+
+    });
 
 
     /* ===============================
@@ -671,7 +725,9 @@
 
     // cerrar modal
     $modal.on('hidden.bs.modal', function() {
+
       resetearTodo();
+
     });
 
 
@@ -688,19 +744,20 @@
 
         $radios.show();
         $fechas.show();
+        $rowObs.show();
+
 
         // guardar estado
         if (!$estado.data('original')) {
           $estado.data('original', $estado.val());
         }
 
-        // respetar estado existente
+        // respetar estado
         const estadoActual = parseInt($estado.val());
 
         if (!ESTADOS_REPROGRAMADOS.includes(estadoActual)) {
           $estado.val(3);
         }
-
 
 
         // decidir radio
@@ -722,7 +779,6 @@
 
       }
 
-      // forzar vista correcta
       controlarFechas();
 
     });
@@ -863,6 +919,8 @@
                   <td>${formatearFechaSimple(row.valor_anterior)}</td>
 
                   <td>${formatearFechaSimple(row.valor_nuevo)}</td>
+
+                  <td>${row.observacion ?? '-'}</td>   <!-- 🔥 -->
 
 
                   <td>${fechaFormateada}</td>
@@ -1111,4 +1169,58 @@
       }
     });
   }
+</script>
+
+<script>
+$(document).ready(function() {
+
+  const urlParams = new URLSearchParams(window.location.search);
+
+  if (!urlParams.toString()) return;
+
+  const filtros = {
+    proyecto: urlParams.get('proyecto') || '',
+    etapa: urlParams.get('etapa') || '',
+    area: urlParams.get('area') || '',
+    estado: urlParams.get('estado') || ''
+  };
+
+  // Esperar DataTable
+  let espera = setInterval(function() {
+
+    if (window.dt) {
+
+      clearInterval(espera);
+
+      // Proyecto
+      if (filtros.proyecto) {
+        $('#proyectoFiltro').val(filtros.proyecto);
+      }
+
+      buscarTabla();
+
+      setTimeout(function() {
+
+        if (filtros.etapa) {
+          $('#etapaFiltro').val(filtros.etapa).trigger('change');
+        }
+
+        if (filtros.area) {
+          $('#areaFiltro').val(filtros.area).trigger('change');
+        }
+
+        if (filtros.estado) {
+          $('#estadoFiltro').val(filtros.estado).trigger('change');
+        }
+
+        sessionStorage.removeItem('filtrosURL');
+
+
+      }, 500);
+
+    }
+
+  }, 200);
+
+});
 </script>

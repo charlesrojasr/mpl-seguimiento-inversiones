@@ -29,6 +29,7 @@
                 <th>Campo</th>
                 <th>Valor Anterior</th>
                 <th>Valor Nuevo</th>
+                <th>Observación</th> <!-- 🔥 NUEVO -->
                 <th>Fecha de Actualización</th>
               </tr>
             </thead>

@@ -26,11 +26,10 @@ $sql = "SELECT
     ar.nombre AS nombre_area,
 
     a.accion,
-    a.tabla_afectada,
-    a.registro_id,
     a.campo,
     a.valor_anterior,
     a.valor_nuevo,
+    a.observacion, -- 🔥 NUEVO
     a.fecha
 
 FROM inversiones_seg_auditoria a
@@ -41,16 +40,16 @@ LEFT JOIN inversiones_seg_user_profile u
 LEFT JOIN inversiones_seg_area ar
     ON ar.id = a.area_id
 
-
 WHERE a.registro_id = ?
+
 AND a.campo IN (
     'fecha_reprogramada',
     'fecha_reprogramada_inicio'
 )
 
 ORDER BY a.id DESC
-
 ";
+
 
 
 $stmt = $conn->prepare($sql);
@@ -64,7 +63,6 @@ $data = [];
 while ($row = $result->fetch_assoc()) {
 
     $data[] = $row;
-
 }
 
 echo json_encode($data, JSON_UNESCAPED_UNICODE);

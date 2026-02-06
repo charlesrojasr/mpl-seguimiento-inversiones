@@ -141,6 +141,7 @@
                 <th><?php echo $titulocampobd10P; ?></th>
                 <th><?php echo $titulocampobd15P; ?></th>
                 <th><?php echo $titulocampobd11P; ?></th>
+                <th><?php echo $titulocampobd16P; ?></th>
 
             </tr>
         </thead>
@@ -236,6 +237,7 @@
                             </span>
                         <?php endif; ?>
                     </td>
+                    <td><?php echo $motoTaxy["$titulocampobd16"]; ?></td>
 
                 </tr>
 

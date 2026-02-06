@@ -43,6 +43,8 @@ if (isset($_POST['edit'])) {
     ========================= */
     $fecha_reprogramada     = $_POST['fecha_reprogramada'] ?? null;
     $fecha_inicio_reprog    = $_POST['fecha_reprogramada_inicio'] ?? null;
+    $observacion = limpiar($conn, $_POST['observacion'] ?? '');
+
 
 
 
@@ -83,7 +85,8 @@ if (isset($_POST['edit'])) {
         'fecha_final'             => $fecha_final,
 
         'fecha_reprogramada'      => $fecha_reprogramada,
-        'fecha_reprogramada_inicio' => $fecha_inicio_reprog
+        'fecha_reprogramada_inicio' => $fecha_inicio_reprog,
+        'observacion' => $observacion
     ];
 
 
@@ -126,6 +129,9 @@ if (isset($_POST['edit'])) {
     $campos[] = "area_id = '$area_id'";
     $campos[] = "estado_id = '$estado_id'";
     $campos[] = "actividad = '$actividad'";
+    $campos[] = "observacion = '$observacion'";
+
+
 
     // responsable
     $campos[] = "responsable_nombre = '$responsable_nombre'";
@@ -197,15 +203,24 @@ if (isset($_POST['edit'])) {
                     $campo,
                     $valorAnterior,
                     $nuevoValor,
-                    $area_id // 👈 CLAVE
+                    $observacion
                 );
             }
         }
 
 
         echo "<script>
-        alert('Actividad actualizada correctamente');
-        window.location = 'actividades.php';
-    </script>";
-    }
+
+            if (typeof guardarFiltrosActuales === 'function') {
+                guardarFiltrosActuales();
+            }
+
+            alert('Actividad actualizada correctamente');
+
+            // 🔥 REDIRIGIR CON FILTROS
+            let params = sessionStorage.getItem('filtrosURL') || '';
+            window.location = 'actividades.php?' + params;
+
+            </script>";
+                }
 }
