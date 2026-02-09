@@ -70,6 +70,15 @@ if (isset($_POST['edit'])) {
     }
 
     /* =========================
+   DETECTAR CAMBIO EN DIAS
+========================= */
+    $dias_nuevo    = isset($_POST['dias']) ? intval($_POST['dias']) : $oldData['dias'];
+    $dias_antiguo  = $oldData['dias'];
+
+    $cambioDias = ((string)$dias_nuevo !== (string)$dias_antiguo);
+
+
+    /* =========================
    CAMPOS A AUDITAR
 ========================= */
 
@@ -77,6 +86,7 @@ if (isset($_POST['edit'])) {
         'area_id'                 => $area_id,
         'estado_id'               => $estado_id,
         'actividad'               => $actividad,
+        'dias' => $dias_nuevo,
 
         'responsable_nombre'      => $responsable_nombre,
         'responsable_apellidop'   => $responsable_apellidop,
@@ -119,6 +129,132 @@ if (isset($_POST['edit'])) {
         $estado_id = 4;
     }
 
+    $reprogramarCronograma = $reprogramo || $cambioDias;
+
+    $observacion_auto = $cambioDias
+    ? 'Se actualizó la cantidad de días en el nro ' . $id
+    : 'Añadida por reprogramación de nro ' . $id;
+
+
+    /* =========================
+   PASO 4: RECALCULAR FECHA FIN
+   SI CAMBIAN LOS DÍAS
+========================= */
+    if ($cambioDias) {
+
+        // 1️⃣ Definir desde qué fecha se calcula
+        // Prioridad: reprogramada > normal
+        $base_inicio =
+            $fecha_inicio_reprog
+            ?? $oldData['fecha_reprogramada_inicio']
+            ?? $fecha_inicio
+            ?? $oldData['fecha_inicio'];
+
+        // 2️⃣ Recalcular fecha fin automáticamente
+        if (!empty($base_inicio)) {
+
+            $fecha_reprogramada = date(
+                'Y-m-d',
+                strtotime($base_inicio . " + {$dias_nuevo} days")
+            );
+
+            // 3️⃣ Forzar estado reprogramado
+            $estado_id = 4;
+        }
+    }
+
+
+
+    if ($reprogramo && !empty($fecha_reprogramada)) {
+
+        // Fecha base: fin reprogramado de la actividad editada
+        $fechaBase = $fecha_reprogramada;
+
+        // Obtener TODAS las actividades siguientes del mismo proyecto
+        $sqlNexts = "
+        SELECT *
+        FROM inversiones_seg_inversiones
+        WHERE proyecto_id = {$oldData['proyecto_id']}
+          AND id > $id
+        ORDER BY id ASC
+    ";
+
+        $resNexts = $conn->query($sqlNexts);
+
+        while ($resNexts && $next = $resNexts->fetch_assoc()) {
+
+            // ➕ 1 día desde la fecha anterior
+            $nueva_fecha_inicio = date(
+                'Y-m-d',
+                strtotime($fechaBase . ' +1 day')
+            );
+
+            // Calcular fecha fin automáticamente
+            if (!empty($next['dias'])) {
+                $nueva_fecha_fin = date(
+                    'Y-m-d',
+                    strtotime($nueva_fecha_inicio . " + {$next['dias']} days")
+                );
+            } else {
+                $nueva_fecha_fin = null;
+            }
+
+            // UPDATE
+            $sqlUpdate = "
+            UPDATE inversiones_seg_inversiones
+            SET
+                fecha_reprogramada_inicio = '$nueva_fecha_inicio',
+                fecha_reprogramada = " . ($nueva_fecha_fin ? "'$nueva_fecha_fin'" : "NULL") . ",
+                estado_id = 4,
+                observacion = '$observacion_auto'
+
+            WHERE id = {$next['id']}
+        ";
+
+            if ($conn->query($sqlUpdate)) {
+
+                // AUDITORÍA
+                registrarAuditoria(
+                    $conn,
+                    'UPDATE',
+                    'inversiones_seg_inversiones',
+                    $next['id'],
+                    'fecha_reprogramada_inicio',
+                    $next['fecha_reprogramada_inicio'],
+                    $nueva_fecha_inicio,
+                    $observacion_auto
+                );
+
+                registrarAuditoria(
+                    $conn,
+                    'UPDATE',
+                    'inversiones_seg_inversiones',
+                    $next['id'],
+                    'fecha_reprogramada',
+                    $next['fecha_reprogramada'],
+                    $nueva_fecha_fin,
+                    $observacion_auto
+                );
+
+                registrarAuditoria(
+                    $conn,
+                    'UPDATE',
+                    'inversiones_seg_inversiones',
+                    $next['id'],
+                    'estado_id',
+                    $next['estado_id'],
+                    4,
+                    $observacion_auto
+                );
+            }
+
+            // La fecha base pasa a ser el fin de esta actividad
+            $fechaBase = $nueva_fecha_fin ?? $nueva_fecha_inicio;
+        }
+    }
+
+
+
 
     /* =========================
        ARMAR UPDATE
@@ -137,8 +273,7 @@ if (isset($_POST['edit'])) {
 
     $campos[] = "actividad = '$actividad'";
     $campos[] = "observacion = '$observacion'";
-
-
+    $campos[] = "dias = '$dias_nuevo'";
 
     // responsable
     $campos[] = "responsable_nombre = '$responsable_nombre'";
@@ -214,6 +349,76 @@ if (isset($_POST['edit'])) {
                 );
             }
         }
+
+        /* =========================
+   PASO 5: REPROGRAMACIÓN
+   EN CASCADA
+========================= */
+        if ($reprogramarCronograma && !empty($fecha_reprogramada)) {
+
+            // Fecha base: fin de la actividad actual
+            $fechaBase = $fecha_reprogramada;
+
+            // Obtener TODAS las actividades siguientes
+            $sqlNexts = "SELECT *
+                FROM inversiones_seg_inversiones
+                WHERE proyecto_id = {$oldData['proyecto_id']}
+                AND id > $id
+                ORDER BY id ASC
+            ";
+
+            $resNexts = $conn->query($sqlNexts);
+
+            while ($resNexts && $next = $resNexts->fetch_assoc()) {
+
+                // 🔒 No tocar actividades finalizadas
+                if ((int)$next['estado_id'] === 5) {
+                    continue;
+                }
+
+                // 1️⃣ Inicio = fin anterior + 1 día
+                $nueva_fecha_inicio = date(
+                    'Y-m-d',
+                    strtotime($fechaBase . ' +1 day')
+                );
+
+                // 2️⃣ Fin = inicio + días
+                if (!empty($next['dias'])) {
+                    $nueva_fecha_fin = date(
+                        'Y-m-d',
+                        strtotime($nueva_fecha_inicio . " + {$next['dias']} days")
+                    );
+                } else {
+                    $nueva_fecha_fin = null;
+                }
+
+                // 3️⃣ Update automático
+                $conn->query("UPDATE inversiones_seg_inversiones
+                    SET
+                        fecha_reprogramada_inicio = '$nueva_fecha_inicio',
+                        fecha_reprogramada = " . ($nueva_fecha_fin ? "'$nueva_fecha_fin'" : "NULL") . ",
+                        estado_id = 4,
+                        observacion = '$observacion_auto'
+                    WHERE id = {$next['id']}
+                ");
+
+                // 4️⃣ Auditoría resumida
+                registrarAuditoria(
+                    $conn,
+                    'UPDATE',
+                    'inversiones_seg_inversiones',
+                    $next['id'],
+                    'cronograma',
+                    'AUTO',
+                    'AUTO',
+                    $observacion_auto
+                );
+
+                // 5️⃣ Avanzar la cadena
+                $fechaBase = $nueva_fecha_fin ?? $nueva_fecha_inicio;
+            }
+        }
+
 
 
         echo "<script>

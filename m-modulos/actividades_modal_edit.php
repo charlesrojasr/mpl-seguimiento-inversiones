@@ -79,13 +79,21 @@
 
           <div class="form-group row">
 
-            <div class="col-sm-12">
+            <div class="col-sm-8">
               <label><?php echo $titulocampobd6P; ?></label>
               <textarea
                 name="<?php echo $titulocampobd6; ?>"
                 id="edit_<?php echo $titulocampobd6; ?>"
-                class="form-control"
+                class="form-control editable-area"
                 rows="3"></textarea>
+            </div>
+
+            <div class="col-sm-4">
+              <label><?php echo $titulocampobd8P; ?></label>
+              <input type="number"
+                name="<?php echo $titulocampobd8; ?>"
+                id="edit_<?php echo $titulocampobd8; ?>"
+                class="form-control editable-area">
             </div>
 
 
@@ -98,7 +106,7 @@
               <input type="date"
                 name="<?php echo $titulocampobd7; ?>"
                 id="edit_<?php echo $titulocampobd7; ?>"
-                class="form-control">
+                class="form-control editable-area">
             </div>
 
             <div class="col-sm-4">
@@ -106,7 +114,7 @@
               <input type="date"
                 name="<?php echo $titulocampobd9; ?>"
                 id="edit_<?php echo $titulocampobd9; ?>"
-                class="form-control">
+                class="form-control editable-area">
             </div>
 
 
