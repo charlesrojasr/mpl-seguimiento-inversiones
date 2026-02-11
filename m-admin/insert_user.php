@@ -2,8 +2,8 @@
 include '../00_includes/conn.php';
 
 // Datos del usuario a insertar
-$username = 'abc'; // Cambia el nombre de usuario aquí
-$password = '092939'; // Cambia la contraseña aquí
+$username = 'ccenteno'; // Cambia el nombre de usuario aquí
+$password = '41217696'; // Cambia la contraseña aquí
 $role_id = 2; // Asignar el rol de administrador (ID 1)
 
 // Encriptar la contraseña

@@ -22,26 +22,41 @@
   $(function() {
 
     dt = $("#example1").DataTable({
-
-
-
       paging: true,
       lengthChange: false,
       searching: true,
       ordering: false,
       info: true,
-      responsive: true,
-      autoWidth: false,
+
+      responsive: false, // obligatorio con scrollX
+      autoWidth: true, // 🔥 CAMBIA ESTO
       pageLength: 35,
 
+      scrollY: "60vh",
+      scrollX: true,
+      scrollCollapse: true,
+      fixedHeader: true,
+
       buttons: [{
-        extend: 'excel',
-        exportOptions: {
-          modifier: {
-            search: 'applied'
+          extend: 'excel',
+          exportOptions: {
+            modifier: {
+              search: 'applied'
+            }
+          }
+        },
+        {
+          text: '',
+          className: 'btn-proyecto-nombre',
+          attr: {
+            id: 'btnNombreProyecto'
+          },
+          action: function(e, dt, node, config) {
+            // No hace nada, solo visual
           }
         }
-      }],
+      ],
+
 
 
       drawCallback: function() {
@@ -55,6 +70,16 @@
     });
 
     dt.buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+
+    $('#btnNombreProyecto').hide();
+
+
+    // 🔥 Recalcular columnas cuando cambia el tamaño de pantalla
+    $(window).on('resize', function() {
+      if (dt) {
+        dt.columns.adjust().draw();
+      }
+    });
 
 
 
@@ -84,6 +109,12 @@
   });
 </script>
 
+<style>
+  table.dataTable {
+    width: 100% !important;
+  }
+</style>
+
 <script>
   /* =====================================================
    VARIABLES GLOBALES
@@ -109,6 +140,10 @@
 
     let proyecto = $("#proyectoFiltro").val();
 
+    $('#btnNombreProyecto')
+      .text(proyecto)
+      .show();
+
     if (proyecto === "") {
       alert("Seleccione un proyecto");
       return;
@@ -128,11 +163,18 @@
     $("#tablaDatos").show();
     $("#filtrosSecundarios").show();
 
+    // 🔥 FORZAR RECALCULO DE ANCHOS
+    setTimeout(function() {
+      dt.columns.adjust();
+      dt.fixedHeader.adjust();
+    }, 100);
+
     // Cargar filtros secundarios una sola vez
     cargarFiltrosSecundarios();
 
     $("#graficaAvance").show();
     cargarGraficoProyecto($("#proyectoFiltro").val());
+
 
   }
 
@@ -149,6 +191,13 @@
 
     $("#tablaDatos").hide();
     $("#graficaAvance").hide();
+    $('#btnNombreProyecto').hide();
+
+
+    setTimeout(function() {
+      dt.columns.adjust();
+      dt.fixedHeader.adjust();
+    }, 100);
 
   }
 
@@ -1315,5 +1364,11 @@
     /* no se puede interactuar */
     background-color: #e9ecef;
     opacity: 1;
+  }
+
+  .btn-proyecto-nombre {
+    background: #00c0ef !important;
+    padding: 6px 18px !important;
+    font-weight: bold;
   }
 </style>

@@ -57,10 +57,12 @@
     </div>
 
     <div class="card-footer bg-transparent">
-        <h3 class="card-title">
-            <i class="fas fa-chart-pie mr-1"></i>
-            Avance por Etapa (%)
-        </h3>
+        <div class="row">
+            <h3 class="card-title">
+                <i class="fas fa-chart-pie mr-1"></i>
+                Avance por Etapa (%)
+            </h3>
+        </div>
         <div class="row">
             <div class="col-12 col-md-4 text-center mb-3">
                 <div style="height:160px; position:relative;">
@@ -125,7 +127,7 @@
 <!-- Tabla de datos -->
 <div class="card mt-3" id="tablaDatos" style="display:none;">
 
-    <table id="example1" class="table table-bordered table-striped table-responsive">
+    <table id="example1" class="table table-bordered table-striped">
         <thead>
             <tr>
 

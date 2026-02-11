@@ -72,10 +72,16 @@ if (isset($_POST['edit'])) {
     /* =========================
    DETECTAR CAMBIO EN DIAS
 ========================= */
-    $dias_nuevo    = isset($_POST['dias']) ? intval($_POST['dias']) : $oldData['dias'];
+    if (isset($_POST['dias']) && $_POST['dias'] !== '') {
+        $dias_nuevo = intval($_POST['dias']);
+    } else {
+        $dias_nuevo = null;
+    }
+
     $dias_antiguo  = $oldData['dias'];
 
-    $cambioDias = ((string)$dias_nuevo !== (string)$dias_antiguo);
+    $cambioDias = ($dias_nuevo != $dias_antiguo);
+
 
 
     /* =========================
@@ -132,8 +138,8 @@ if (isset($_POST['edit'])) {
     $reprogramarCronograma = $reprogramo || $cambioDias;
 
     $observacion_auto = $cambioDias
-    ? 'Se actualizó la cantidad de días en el nro ' . $id
-    : 'Añadida por reprogramación de nro ' . $id;
+        ? 'Se actualizó la cantidad de días en el nro ' . $id
+        : 'Añadida por reprogramación de nro ' . $id;
 
 
     /* =========================
@@ -273,7 +279,12 @@ if (isset($_POST['edit'])) {
 
     $campos[] = "actividad = '$actividad'";
     $campos[] = "observacion = '$observacion'";
-    $campos[] = "dias = '$dias_nuevo'";
+    if ($dias_nuevo !== null) {
+        $campos[] = "dias = '$dias_nuevo'";
+    } else {
+        $campos[] = "dias = NULL";
+    }
+
 
     // responsable
     $campos[] = "responsable_nombre = '$responsable_nombre'";
