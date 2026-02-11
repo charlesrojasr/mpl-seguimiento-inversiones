@@ -135,7 +135,7 @@
                 <th hidden><?php echo $titulocampobd2P; ?></th>
                 <th><?php echo $titulocampobd3P; ?></th>
                 <th><?php echo $titulocampobd4P; ?></th>
-                <th><?php echo $titulocampobd5P; ?></th>
+                <th hidden><?php echo $titulocampobd5P; ?></th>
                 <th><?php echo $titulocampobd6P; ?></th>
                 <th><?php echo $titulocampobd7P; ?></th>
                 <th><?php echo $titulocampobd8P; ?></th>
@@ -168,7 +168,7 @@
                     <td hidden><?php echo $motoTaxy["$titulocampobd2"]; ?></td>
                     <td><?php echo $motoTaxy["$titulocampobd3"]; ?></td>
                     <td><?php echo $motoTaxy["$titulocampobd4"]; ?></td>
-                    <td><?php echo $motoTaxy["$titulocampobd5"]; ?></td>
+                    <td hidden><?php echo $motoTaxy["$titulocampobd5"]; ?></td>
                     <td><?php echo $motoTaxy["$titulocampobd6"]; ?></td>
                     <td style="white-space: nowrap;">
                         <?php
