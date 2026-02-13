@@ -82,6 +82,36 @@ if (isset($_POST['edit'])) {
 
     $cambioDias = ($dias_nuevo != $dias_antiguo);
 
+    /* =========================
+   TIPO DE DÍAS
+========================= */
+    if (isset($_POST['dias_tipo']) && $_POST['dias_tipo'] !== '') {
+        $tipo_dias_nuevo = intval($_POST['dias_tipo']);
+    } else {
+        $tipo_dias_nuevo = null;
+    }
+
+    $tipo_dias_antiguo = $oldData['dias_tipo'] ?? null;
+
+
+    $cambioTipoDias = ($tipo_dias_nuevo != $tipo_dias_antiguo);
+
+    function esFeriadoPeru($conn, $fecha)
+    {
+        $sql = "SELECT id 
+            FROM inversiones_seg_feriados 
+            WHERE fecha = ? 
+            AND estado = 1 
+            LIMIT 1";
+
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("s", $fecha);
+        $stmt->execute();
+        $stmt->store_result();
+
+        return $stmt->num_rows > 0;
+    }
+
 
 
     /* =========================
@@ -93,7 +123,7 @@ if (isset($_POST['edit'])) {
         'estado_id'               => $estado_id,
         'actividad'               => $actividad,
         'dias' => $dias_nuevo,
-
+        'tipo_dias' => $tipo_dias_nuevo,
         'responsable_nombre'      => $responsable_nombre,
         'responsable_apellidop'   => $responsable_apellidop,
         'responsable_apellidom'   => $responsable_apellidom,
@@ -137,6 +167,7 @@ if (isset($_POST['edit'])) {
 
     $reprogramarCronograma = $reprogramo || $cambioDias;
 
+
     $observacion_auto = $cambioDias
         ? 'Se actualizó la cantidad de días en el nro ' . $id
         : 'Añadida por reprogramación de nro ' . $id;
@@ -146,28 +177,72 @@ if (isset($_POST['edit'])) {
    PASO 4: RECALCULAR FECHA FIN
    SI CAMBIAN LOS DÍAS
 ========================= */
-    if ($cambioDias) {
+    if (($cambioDias || $cambioTipoDias) && $dias_nuevo !== null) {
 
-        // 1️⃣ Definir desde qué fecha se calcula
-        // Prioridad: reprogramada > normal
-        $base_inicio =
-            $fecha_inicio_reprog
-            ?? $oldData['fecha_reprogramada_inicio']
-            ?? $fecha_inicio
-            ?? $oldData['fecha_inicio'];
+        // 🔹 Determinar tipo real
+        $tipo_calculo = $tipo_dias_nuevo !== null
+            ? $tipo_dias_nuevo
+            : $oldData['dias_tipo'];
 
-        // 2️⃣ Recalcular fecha fin automáticamente
-        if (!empty($base_inicio)) {
+        // 🔹 Determinar fecha base correctamente
+        if (!empty($fecha_inicio_reprog)) {
+            $base_inicio = $fecha_inicio_reprog;
+        } elseif (!empty($oldData['fecha_reprogramada_inicio'])) {
+            $base_inicio = $oldData['fecha_reprogramada_inicio'];
+        } elseif (!empty($fecha_inicio)) {
+            $base_inicio = $fecha_inicio;
+        } else {
+            $base_inicio = $oldData['fecha_inicio'];
+        }
 
-            $fecha_reprogramada = date(
-                'Y-m-d',
-                strtotime($base_inicio . " + {$dias_nuevo} days")
-            );
+        if (!empty($base_inicio) && !empty($tipo_calculo)) {
 
-            // 3️⃣ Forzar estado reprogramado
-            $estado_id = 4;
+            // 📅 CALENDARIO
+            if ($tipo_calculo == 1) {
+
+                $fecha_calculada = date(
+                    'Y-m-d',
+                    strtotime($base_inicio . " + {$dias_nuevo} days")
+                );
+            }
+
+            // 🏢 HÁBILES
+            if ($tipo_calculo == 2) {
+
+                $fecha_temp = $base_inicio;
+                $contador = 0;
+
+                while ($contador < $dias_nuevo) {
+
+                    $fecha_temp = date(
+                        'Y-m-d',
+                        strtotime($fecha_temp . ' +1 day')
+                    );
+
+                    $diaSemana = date('N', strtotime($fecha_temp));
+
+                    if ($diaSemana < 6 && !esFeriadoPeru($conn, $fecha_temp)) {
+                        $contador++;
+                    }
+                }
+
+                $fecha_calculada = $fecha_temp;
+            }
+
+            // 🔥 APLICAR SEGÚN CONTEXTO REAL
+            if (!empty($oldData['fecha_reprogramada_inicio']) || !empty($fecha_inicio_reprog)) {
+
+                // Si está reprogramado → actualizar fecha_reprogramada
+                $fecha_reprogramada = $fecha_calculada;
+            } else {
+
+                // Si NO está reprogramado → actualizar fecha_final
+                $fecha_final = $fecha_calculada;
+            }
         }
     }
+
+
 
 
 
@@ -195,15 +270,41 @@ if (isset($_POST['edit'])) {
                 strtotime($fechaBase . ' +1 day')
             );
 
-            // Calcular fecha fin automáticamente
             if (!empty($next['dias'])) {
-                $nueva_fecha_fin = date(
-                    'Y-m-d',
-                    strtotime($nueva_fecha_inicio . " + {$next['dias']} days")
-                );
+
+                if ($next['dias_tipo'] == 1) {
+
+                    // 📅 Calendario
+                    $nueva_fecha_fin = date(
+                        'Y-m-d',
+                        strtotime($nueva_fecha_inicio . " + {$next['dias']} days")
+                    );
+                } elseif ($next['dias_tipo'] == 2) {
+
+                    // 🏢 Hábiles
+                    $fecha_temp = $nueva_fecha_inicio;
+                    $contador = 0;
+
+                    while ($contador < $next['dias']) {
+
+                        $fecha_temp = date(
+                            'Y-m-d',
+                            strtotime($fecha_temp . ' +1 day')
+                        );
+
+                        $diaSemana = date('N', strtotime($fecha_temp));
+
+                        if ($diaSemana < 6 && !esFeriadoPeru($conn, $fecha_temp)) {
+                            $contador++;
+                        }
+                    }
+
+                    $nueva_fecha_fin = $fecha_temp;
+                }
             } else {
                 $nueva_fecha_fin = null;
             }
+
 
             // UPDATE
             $sqlUpdate = "
@@ -284,6 +385,13 @@ if (isset($_POST['edit'])) {
     } else {
         $campos[] = "dias = NULL";
     }
+
+    if ($tipo_dias_nuevo !== null) {
+        $campos[] = "dias_tipo = '$tipo_dias_nuevo'";
+    } else {
+        $campos[] = "dias_tipo = NULL";
+    }
+
 
 
     // responsable

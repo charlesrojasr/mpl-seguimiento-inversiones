@@ -92,6 +92,7 @@ $titulocampobd13  = 'responsable_apellidop';
 $titulocampobd14  = 'responsable_apellidom';
 $titulocampobd15  = 'fecha_reprogramada_inicio';
 $titulocampobd16  = 'observacion';
+$titulocampobd17  = 'dias_tipo';
 
 
 /*
@@ -113,6 +114,7 @@ $titulocampobd10P = 'Estado';
 $titulocampobd11P = 'Fecha Fin Reprogramada';
 $titulocampobd15P = 'Fecha Inicio Reprogramada';
 $titulocampobd16P = 'Observación';
+$titulocampobd17P = 'Tipo de día';
 
 
 /*
@@ -142,6 +144,7 @@ $sql = "SELECT
     i.fecha_inicio,
     i.fecha_final,
     i.dias,
+    i.dias_tipo,
     i.fecha_reprogramada,
     i.fecha_reprogramada_inicio,
     i.observacion

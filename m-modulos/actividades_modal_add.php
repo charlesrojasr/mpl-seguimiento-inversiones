@@ -101,7 +101,7 @@ $areas = obtenerAreasConId();
           <!-- ACTIVIDAD + DIAS -->
           <div class="form-group row">
 
-            <div class="col-sm-8">
+            <div class="col-sm-6">
               <label><?php echo $titulocampobd6P; ?></label>
               <textarea
                 name="<?php echo $titulocampobd6; ?>"
@@ -110,12 +110,45 @@ $areas = obtenerAreasConId();
                 required></textarea>
             </div>
 
-            <div class="col-sm-4">
+            <div class="col-sm-3">
               <label><?php echo $titulocampobd8P; ?></label>
               <input type="number"
                 name="<?php echo $titulocampobd8; ?>"
                 class="form-control">
             </div>
+
+            <div class="col-sm-3">
+              <label><?php echo $titulocampobd17P; ?></label>
+
+              <div class="form-check">
+                <input class="form-check-input"
+                  type="radio"
+                  name="<?php echo $titulocampobd17; ?>"
+                  id="tipo_calendario"
+                  value="1"
+                  checked>
+
+                <label class="form-check-label"
+                  for="tipo_calendario">
+                  Calendario
+                </label>
+              </div>
+
+              <div class="form-check">
+                <input class="form-check-input"
+                  type="radio"
+                  name="<?php echo $titulocampobd17; ?>"
+                  id="tipo_habiles"
+                  value="2">
+
+                <label class="form-check-label"
+                  for="tipo_habiles">
+                  Hábiles
+                </label>
+              </div>
+            </div>
+
+
 
           </div>
 

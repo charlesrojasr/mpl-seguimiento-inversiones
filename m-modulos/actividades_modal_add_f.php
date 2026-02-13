@@ -1,10 +1,4 @@
-
-
-
 <?php
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-
 include 'actividades_config.php';
 include 'actividades_auditoria_helper.php';
 
@@ -43,31 +37,79 @@ if (isset($_POST['add'])) {
     $dias = $_POST[$titulocampobd8] ?? null;
     $dias = ($dias === '' || $dias === null) ? "NULL" : intval($dias);
 
+    // TIPO DE DÍAS (1 = Calendario, 2 = Hábiles)
+    $tipo_dias = intval($_POST[$titulocampobd17] ?? 1);
+
+
     // FECHA INICIO
     $fecha_inicio = $_POST[$titulocampobd7] ?? null;
     $fecha_inicio = !empty($fecha_inicio) ? "'$fecha_inicio'" : "NULL";
+
+    function esFeriadoPeru($conn, $fecha)
+    {
+        $sql = "SELECT id 
+            FROM inversiones_seg_feriados 
+            WHERE fecha = ? 
+            AND estado = 1 
+            LIMIT 1";
+
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("s", $fecha);
+        $stmt->execute();
+        $stmt->store_result();
+
+        return $stmt->num_rows > 0;
+    }
+
+
 
     // FECHA FINAL
     $fecha_final_post = $_POST[$titulocampobd9] ?? null;
 
     if ($dias !== "NULL" && $fecha_inicio !== "NULL") {
 
-        // Si hay días → calcular automáticamente
-        $fecha_final_calc = date(
-            'Y-m-d',
-            strtotime(trim($fecha_inicio, "'") . " + $dias days")
-        );
+        $fechaBase = trim($fecha_inicio, "'");
+
+        if ($tipo_dias == 1) {
+
+            // 📅 CALENDARIO
+            $fecha_final_calc = date(
+                'Y-m-d',
+                strtotime($fechaBase . " + $dias days")
+            );
+        } else {
+
+            // 🏢 HÁBILES PERÚ
+            $fecha_temp = $fechaBase;
+            $contador = 0;
+
+            while ($contador < $dias) {
+
+                $fecha_temp = date(
+                    'Y-m-d',
+                    strtotime($fecha_temp . ' +1 day')
+                );
+
+                $diaSemana = date('N', strtotime($fecha_temp)); // 1=Lun ... 7=Dom
+
+                if ($diaSemana < 6 && !esFeriadoPeru($conn, $fecha_temp)) {
+                    $contador++;
+                }
+            }
+
+            $fecha_final_calc = $fecha_temp;
+        }
 
         $fecha_final = "'$fecha_final_calc'";
     } else {
 
-        // Si NO hay días → usar la fecha enviada por el usuario
         if (!empty($fecha_final_post)) {
             $fecha_final = "'$fecha_final_post'";
         } else {
             $fecha_final = "NULL";
         }
     }
+
 
 
     // ESTADO INICIAL = SIN INICIAR (1)
@@ -87,6 +129,7 @@ if (isset($_POST['add'])) {
         area_id,
         actividad,
         dias,
+        dias_tipo,
         fecha_inicio,
         fecha_final,
         estado_id
@@ -97,6 +140,7 @@ if (isset($_POST['add'])) {
         '$area_id',
         '$actividad',
         $dias,
+        '$tipo_dias',
         $fecha_inicio,
         $fecha_final,
         '1'
@@ -117,6 +161,7 @@ if (isset($_POST['add'])) {
             'area_id'     => $area_id,
             'actividad'   => $actividad,
             'dias'        => ($dias === "NULL") ? null : $dias,
+            'tipo_dias' => $tipo_dias,
             'fecha_inicio' => trim($fecha_inicio, "'"),
             'fecha_final' => trim($fecha_final, "'"),
             'estado_id'   => $estado_id

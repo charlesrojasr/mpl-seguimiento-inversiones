@@ -28,6 +28,7 @@ if (isset($_POST['id'])) {
         i.fecha_inicio,
         i.fecha_final,
         i.dias,
+        i.dias_tipo,
         i.fecha_reprogramada,
         i.fecha_reprogramada_inicio,
         i.observacion

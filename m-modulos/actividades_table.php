@@ -177,7 +177,27 @@
                         }
                         ?>
                     </td>
-                    <td><?php echo $motoTaxy["$titulocampobd8"]; ?></td>
+                    <td>
+                        <?php
+                        $dias = $motoTaxy[$titulocampobd8];
+                        $tipo = $motoTaxy[$titulocampobd17] ?? null;
+
+                        if ($tipo == 1) {
+                            $tipoTexto = "Calendario";
+                        } elseif ($tipo == 2) {
+                            $tipoTexto = "Hábiles";
+                        } else {
+                            $tipoTexto = "";
+                        }
+
+                        echo $dias;
+
+                        if (!empty($tipoTexto)) {
+                            echo " | " . $tipoTexto;
+                        }
+                        ?>
+                    </td>
+
                     <td style="white-space: nowrap;">
                         <?php
                         if (!empty($motoTaxy[$titulocampobd9])) {

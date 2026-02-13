@@ -451,6 +451,17 @@
         $("#edit_<?php echo $titulocampobd6; ?>").val(response.actividad);
         $("#edit_<?php echo $titulocampobd7; ?>").val(response.fecha_inicio);
         $("#edit_<?php echo $titulocampobd8; ?>").val(response.dias);
+        // Tipo de días
+        $('#edit_tipo_calendario').prop('checked', false);
+        $('#edit_tipo_habiles').prop('checked', false);
+
+        if (response.dias_tipo == 1) {
+          $('#edit_tipo_calendario').prop('checked', true);
+        } else if (response.dias_tipo == 2) {
+          $('#edit_tipo_habiles').prop('checked', true);
+        }
+
+
         $("#edit_<?php echo $titulocampobd9; ?>").val(response.fecha_final);
         $("#edit_<?php echo $titulocampobd10; ?>").val(response.estado_name);
         $("#edit_<?php echo $titulocampobd11; ?>").val(response.fecha_reprogramada);
