@@ -1,127 +1,160 @@
+<?php
+include 'actividades_obtener_areas.php';
+$areas = obtenerAreasConId();
+?>
+
+
 <div class="modal fade" id="addnew">
   <div class="modal-dialog modal-xl">
     <div class="modal-content">
+
       <div class="modal-header">
-        <center>
-          <h4 class="modal-title">NUEVA ACTIVIDAD</h4>
-        </center>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
+        <h4 class="modal-title">NUEVA ACTIVIDAD</h4>
+        <button type="button" class="close" data-dismiss="modal">
+          <span>&times;</span>
         </button>
       </div>
 
-      <form class="form-horizontal" method="POST" action="actividades_modal_add_f.php" enctype="multipart/form-data">
+      <form class="form-horizontal"
+        method="POST"
+        onsubmit="guardarFiltrosActuales()"
+        action="actividades_modal_add_f.php">
+
         <div class="modal-body">
+
+          <!-- AREA -->
           <div class="form-group row">
-
-            <div class="col-sm-6">
-              <label for="inputEmail3" class="col-form-label"><?php echo $titulocampobd3P; ?></label>
-              <textarea name="<?php echo $titulocampobd3; ?>" class="form-control" id="<?php echo $titulocampobd3; ?>" placeholder="<?php echo $titulocampobd3P; ?>" rows="3" oninput="this.value = this.value.toUpperCase();" required></textarea>
-            </div>
-
-            <div class="col-sm-6">
-              <label for="inputEmail3" class="col-form-label"><?php echo $titulocampobd8P; ?></label>
-              <textarea name="<?php echo $titulocampobd8; ?>" class="form-control" id="<?php echo $titulocampobd8; ?>" placeholder="<?php echo $titulocampobd8P; ?>" rows="3" oninput="this.value = this.value.toUpperCase();" required></textarea>
-            </div>
-
-          </div>
-
-          <div class="form-group row">
-
-            <div class="col-sm-6">
-              <label class="col-form-label"><?php echo $titulocampobd2P; ?></label>
+            <div class="col-sm-12">
+              <label><?php echo $titulocampobd4P; ?></label>
 
               <?php if ($isAreaUser): ?>
-                <!-- Usuario de área: SELECT bloqueado + hidden -->
-                <select class="form-control" disabled>
-                  <?php
-                  include 'actividades_obtener_areas.php';
-                  $areas = obtenerAreasConId();
 
-                  foreach ($areas as $area) {
-                    $selected = ($area['id'] == $area_id) ? 'selected' : '';
-                    echo '<option value="' . $area['id'] . '" ' . $selected . '>' . $area['nombre'] . '</option>';
-                  }
-                  ?>
+                <!-- Usuario de área -->
+                <select class="form-control" disabled>
+                  <option selected><?= $_SESSION['area_name'] ?></option>
                 </select>
 
-                <!-- Campo oculto para que el valor sí viaje por POST -->
-                <input type="hidden" name="area_id" value="<?php echo $area_id; ?>">
+                <input type="hidden"
+                  name="area_id"
+                  value="<?= $_SESSION['area_id'] ?>">
 
               <?php else: ?>
-                <!-- Admin u otros roles -->
-                <select name="area_id" class="form-control" id="area_id" required>
+
+                <!-- Admin -->
+                <select name="area_id"
+                  class="form-control"
+                  required>
                   <option value="">SELECCIONAR</option>
-                  <?php
-                  include 'actividades_obtener_areas.php';
-                  $areas = obtenerAreasConId();
 
-                  foreach ($areas as $area) {
-                    echo '<option value="' . $area['id'] . '">' . $area['nombre'] . '</option>';
-                  }
-                  ?>
+                  <?php foreach ($areas as $area): ?>
+                    <option value="<?= $area['id'] ?>">
+                      <?= $area['nombre'] ?>
+                    </option>
+                  <?php endforeach; ?>
+
                 </select>
+
               <?php endif; ?>
+
             </div>
-
-
-            <div class="col-sm-3">
-              <label for="inputEmail3" class="col-form-label"><?php echo $titulocampobd9P; ?></label>
-              <input type="text" name="<?php echo $titulocampobd9; ?>" class="form-control" id="<?php echo $titulocampobd9; ?>" placeholder="<?php echo $titulocampobd9P; ?>" required pattern="^\d+(\.\d{1,2})?$" oninput="validateInput(this)">
-            </div>
-
-            <div class="col-sm-3">
-              <label for="inputEmail3" class="col-form-label"><?php echo $titulocampobd10P; ?></label>
-              <input type="text" name="<?php echo $titulocampobd10; ?>" class="form-control" id="<?php echo $titulocampobd10; ?>" placeholder="<?php echo $titulocampobd10P; ?>" required pattern="^\d+(\.\d{1,2})?$" oninput="validateInput(this)">
-            </div>
-
-            <script>
-              function validateInput(input) {
-                // Elimina cualquier carácter que no sea número o punto decimal
-                input.value = input.value.replace(/[^0-9\.]/g, '');
-
-                // Solo permite un punto decimal y máximo dos decimales
-                let decimalCount = (input.value.match(/\./g) || []).length;
-                if (decimalCount > 1) {
-                  input.value = input.value.substring(0, input.value.lastIndexOf('.'));
-                }
-
-                if (input.value.indexOf('.') !== -1) {
-                  let decimalPart = input.value.split('.')[1];
-                  if (decimalPart.length > 2) {
-                    input.value = input.value.substring(0, input.value.lastIndexOf('.') + 3);
-                  }
-                }
-              }
-            </script>
-
-
-
           </div>
 
+
+          <!-- ETAPA -->
+          <div class="form-group row">
+            <div class="col-sm-6">
+
+              <label><?php echo $titulocampobd2P; ?></label>
+
+              <input type="text"
+                id="add_proyecto_nombre"
+                class="form-control"
+                readonly>
+
+              <input type="hidden"
+                name="proyecto_id"
+                id="add_proyecto_id">
+
+            </div>
+            <div class="col-sm-6">
+              <label><?php echo $titulocampobd3P; ?></label>
+
+              <select name="etapa_id"
+                class="form-control"
+                required>
+
+                <option value="">SELECCIONAR</option>
+
+                <?php
+                include 'actividades_obtener_etapas.php';
+                $etapas = obtenerEtapasConId();
+
+                foreach ($etapas as $etapa) {
+                  echo '<option value="' . $etapa['id'] . '">'
+                    . $etapa['nombre'] . '</option>';
+                }
+                ?>
+              </select>
+            </div>
+          </div>
+
+          <!-- ACTIVIDAD + DIAS -->
           <div class="form-group row">
 
-            <div class="col-sm-12">
-              <label for="inputEmail3" class="col-form-label"><?php echo $titulocampobd4P; ?></label>
-              <textarea name="<?php echo $titulocampobd4; ?>" class="form-control" id="<?php echo $titulocampobd4; ?>" placeholder="<?php echo $titulocampobd4P; ?>" rows="3" oninput="this.value = this.value.toUpperCase();" required></textarea>
+            <div class="col-sm-8">
+              <label><?php echo $titulocampobd6P; ?></label>
+              <textarea
+                name="<?php echo $titulocampobd6; ?>"
+                class="form-control"
+                rows="3"
+                required></textarea>
+            </div>
+
+            <div class="col-sm-4">
+              <label><?php echo $titulocampobd8P; ?></label>
+              <input type="number"
+                name="<?php echo $titulocampobd8; ?>"
+                class="form-control">
             </div>
 
           </div>
 
+          <!-- FECHAS + ESTADO -->
           <div class="form-group row">
-            <div class="col-sm-12">
-              <div class="form-check">
-                <input type="checkbox" class="form-check-input" name="otra_estrategia" id="otra_estrategia">
-                <label class="form-check-label" for="otra_estrategia"><?php echo "Considerar como Otra Estrategia"; ?></label>
-              </div>
+
+            <div class="col-sm-6">
+              <label><?php echo $titulocampobd7P; ?></label>
+              <input type="date"
+                name="<?php echo $titulocampobd7; ?>"
+                class="form-control">
             </div>
+
+            <div class="col-sm-6">
+              <label><?php echo $titulocampobd9P; ?></label>
+              <input type="date"
+                name="<?php echo $titulocampobd9; ?>"
+                class="form-control">
+            </div>
+
+
           </div>
+
         </div>
 
         <div class="modal-footer justify-content-between">
-          <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-          <button type="submit" name="add" class="btn btn-primary">Añadir</button>
+          <button type="button"
+            class="btn btn-secondary"
+            data-dismiss="modal">
+            Cancelar
+          </button>
+
+          <button type="submit"
+            name="add"
+            class="btn btn-primary">
+            Añadir
+          </button>
         </div>
+
       </form>
     </div>
   </div>

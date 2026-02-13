@@ -57,7 +57,7 @@
     </div>
 
     <div class="card-footer bg-transparent">
-        <div class="row">
+        <div class="row mb-3">
             <h3 class="card-title">
                 <i class="fas fa-chart-pie mr-1"></i>
                 Avance por Etapa (%)

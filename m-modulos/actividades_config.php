@@ -163,7 +163,7 @@ LEFT JOIN inversiones_seg_estado es
 ORDER BY 
     i.proyecto_id ASC,
     i.etapa_id ASC,
-    i.id ASC
+    COALESCE(i.fecha_reprogramada_inicio, i.fecha_inicio) ASC
 ";
 
 $getAllMotoTaxy = $conn->query($sql);

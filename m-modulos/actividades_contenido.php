@@ -10,12 +10,9 @@
 
            </div>
          </div>
-         <?php if ($role_id == 1): ?>
-          <!--
-           <div class="col-sm-6">
-             <button type="button" data-toggle="modal" data-target="#addnew" style="margin-left: 30px; margin-right: auto;" class="btn  btn-dark  btn-sm"> <i class="fa-solid fa-plus"></i> AÑADIR NUEVA ACTIVIDAD </button>
-           </div>-->
-         <?php endif; ?>
+         <div class="col-sm-6">
+           
+         </div>
        </div>
      </div>
    </div>

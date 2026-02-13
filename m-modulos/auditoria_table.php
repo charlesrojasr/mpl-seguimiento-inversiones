@@ -3,7 +3,7 @@
 include('actividades_buscar_areas.php'); // Asegúrate de que la ruta sea correcta
 
 // Obtener las áreas para el filtro
-$areas = obtenerAreas();
+$areas = obtenerAreasConId();
 ?>
 
 <!-- ===================== FILTROS ===================== -->

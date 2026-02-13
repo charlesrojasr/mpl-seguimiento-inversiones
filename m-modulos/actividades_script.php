@@ -38,14 +38,6 @@
       fixedHeader: true,
 
       buttons: [{
-          extend: 'excel',
-          exportOptions: {
-            modifier: {
-              search: 'applied'
-            }
-          }
-        },
-        {
           text: '',
           className: 'btn-proyecto-nombre',
           attr: {
@@ -53,6 +45,24 @@
           },
           action: function(e, dt, node, config) {
             // No hace nada, solo visual
+          }
+        },
+        {
+          extend: 'excel',
+          text: '<i class="fa-solid fa-file-excel"></i> Exportar',
+          className: 'btn btn-success btn-sm',
+          exportOptions: {
+            modifier: {
+              search: 'applied'
+            }
+          }
+        },
+        {
+          text: '<i class="fa-solid fa-plus"></i> Añadir actividad',
+          className: 'btn btn-dark btn-sm',
+          attr: {
+            'data-toggle': 'modal',
+            'data-target': '#addnew'
           }
         }
       ],
@@ -1356,6 +1366,39 @@
     $('#edit .close, #edit button[data-dismiss="modal"]')
       .prop('disabled', false);
   }
+</script>
+
+<script>
+  $('#addnew').on('show.bs.modal', function() {
+
+    const proyectoNombre = $('#proyectoFiltro').val();
+
+    if (!proyectoNombre) {
+      alert('Debe seleccionar un proyecto primero');
+      return false;
+    }
+
+    // Mostrar nombre
+    $('#add_proyecto_nombre').val(proyectoNombre);
+
+    // Obtener ID real vía AJAX
+    $.ajax({
+      url: 'actividades_obtener_proyecto_id.php',
+      type: 'POST',
+      data: {
+        nombre: proyectoNombre
+      },
+      dataType: 'json',
+      success: function(resp) {
+        if (resp.id) {
+          $('#add_proyecto_id').val(resp.id);
+        } else {
+          alert('Proyecto no encontrado');
+        }
+      }
+    });
+
+  });
 </script>
 
 <style>

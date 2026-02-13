@@ -70,6 +70,7 @@
 
 
           </div>
+
           <script>
             function soloLetras(input) {
               input.value = input.value.replace(/[^a-zA-ZÁÉÍÓÚáéíóúÑñ\s]/g, '');
@@ -95,8 +96,6 @@
                 id="edit_<?php echo $titulocampobd8; ?>"
                 class="form-control editable-area">
             </div>
-
-
           </div>
 
           <div class="form-group row">
