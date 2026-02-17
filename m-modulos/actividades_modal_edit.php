@@ -85,7 +85,7 @@
               <textarea
                 name="<?php echo $titulocampobd6; ?>"
                 id="edit_<?php echo $titulocampobd6; ?>"
-                class="form-control editable-area"
+                class="form-control"
                 rows="3"></textarea>
             </div>
 
@@ -94,7 +94,7 @@
               <input type="number"
                 name="<?php echo $titulocampobd8; ?>"
                 id="edit_<?php echo $titulocampobd8; ?>"
-                class="form-control editable-area">
+                class="form-control">
             </div>
 
             <div class="col-sm-3">
@@ -105,10 +105,10 @@
                   type="radio"
                   name="<?php echo $titulocampobd17; ?>"
                   id="edit_tipo_calendario"
-                  value="1">
+                  value="1"
+                  required>
 
-                <label class="form-check-label"
-                  for="edit_tipo_calendario">
+                <label class="form-check-label" for="edit_tipo_calendario">
                   Calendario
                 </label>
               </div>
@@ -120,12 +120,12 @@
                   id="edit_tipo_habiles"
                   value="2">
 
-                <label class="form-check-label"
-                  for="edit_tipo_habiles">
+                <label class="form-check-label" for="edit_tipo_habiles">
                   Hábiles
                 </label>
               </div>
             </div>
+
 
           </div>
 
@@ -136,7 +136,7 @@
               <input type="date"
                 name="<?php echo $titulocampobd7; ?>"
                 id="edit_<?php echo $titulocampobd7; ?>"
-                class="form-control editable-area">
+                class="form-control">
             </div>
 
             <div class="col-sm-4">
@@ -144,7 +144,7 @@
               <input type="date"
                 name="<?php echo $titulocampobd9; ?>"
                 id="edit_<?php echo $titulocampobd9; ?>"
-                class="form-control editable-area">
+                class="form-control">
             </div>
 
 

@@ -54,7 +54,8 @@
           exportOptions: {
             modifier: {
               search: 'applied'
-            }
+            },
+            columns: ':visible:not(:eq(4))'
           }
         },
         {

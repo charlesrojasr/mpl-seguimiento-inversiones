@@ -18,6 +18,27 @@ if (isset($_POST['edit'])) {
     $id = intval($_POST['id']);
 
     /* =========================
+   OBTENER DATOS ANTIGUOS
+========================= */
+
+    $sqlOld = "SELECT *
+    FROM inversiones_seg_inversiones
+    WHERE id = $id
+    LIMIT 1
+";
+
+    $resOld = $conn->query($sqlOld);
+
+    $oldData = null;
+
+    if ($resOld && $resOld->num_rows === 1) {
+        $oldData = $resOld->fetch_assoc();
+    } else {
+        die("Registro no encontrado para auditoría.");
+    }
+
+
+    /* =========================
        CAMPOS PRINCIPALES
     ========================= */
     $area_id   = isset($_POST['area_id']) ? intval($_POST['area_id']) : $oldData['area_id'];
@@ -49,25 +70,6 @@ if (isset($_POST['edit'])) {
 
 
 
-    /* =========================
-   OBTENER DATOS ANTIGUOS
-========================= */
-
-    $sqlOld = "SELECT *
-    FROM inversiones_seg_inversiones
-    WHERE id = $id
-    LIMIT 1
-";
-
-    $resOld = $conn->query($sqlOld);
-
-    $oldData = null;
-
-    if ($resOld && $resOld->num_rows === 1) {
-        $oldData = $resOld->fetch_assoc();
-    } else {
-        die("Registro no encontrado para auditoría.");
-    }
 
     /* =========================
    DETECTAR CAMBIO EN DIAS
