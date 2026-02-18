@@ -152,10 +152,13 @@
                 <tr>
                     <td>
                         <?php echo $motoTaxy["$titulocampobd1"]; ?>
-                        <button class="btn btn-primary btn-block edit mb-1"
-                            data-id="<?php echo $motoTaxy[$titulocampobd1]; ?>">
-                            <i class="fa-solid fa-pen-to-square"></i>
-                        </button>
+                        <?php if ($_SESSION['role_id'] == 1 || $_SESSION['role_id'] == 2): ?>
+                            <button class="btn btn-primary btn-block edit mb-1"
+                                data-id="<?php echo $motoTaxy[$titulocampobd1]; ?>">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </button>
+                        <?php endif; ?>
+
 
                         <button class="btn btn-info btn-block btn-auditoria"
                             data-id="<?php echo $motoTaxy[$titulocampobd1]; ?>">

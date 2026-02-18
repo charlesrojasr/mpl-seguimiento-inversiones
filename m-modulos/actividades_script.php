@@ -37,36 +37,49 @@
       scrollCollapse: true,
       fixedHeader: true,
 
-      buttons: [{
-          text: '',
-          className: 'btn-proyecto-nombre',
-          attr: {
-            id: 'btnNombreProyecto'
-          },
-          action: function(e, dt, node, config) {
-            // No hace nada, solo visual
-          }
-        },
-        {
-          extend: 'excel',
-          text: '<i class="fa-solid fa-file-excel"></i> Exportar',
-          className: 'btn btn-success btn-sm',
-          exportOptions: {
-            modifier: {
-              search: 'applied'
+      buttons: (function() {
+
+        let btns = [
+
+          {
+            text: '',
+            className: 'btn-proyecto-nombre',
+            attr: {
+              id: 'btnNombreProyecto'
             },
-            columns: ':visible:not(:eq(4))'
+            action: function(e, dt, node, config) {}
+          },
+
+          {
+            extend: 'excel',
+            text: '<i class="fa-solid fa-file-excel"></i> Exportar',
+            className: 'btn btn-success btn-sm',
+            exportOptions: {
+              modifier: {
+                search: 'applied'
+              },
+              columns: ':visible:not(:eq(4))'
+            }
           }
-        },
-        {
-          text: '<i class="fa-solid fa-plus"></i> Añadir actividad',
-          className: 'btn btn-dark btn-sm',
-          attr: {
-            'data-toggle': 'modal',
-            'data-target': '#addnew'
-          }
+
+        ];
+
+        // 🔥 SOLO ADMIN (1) Y AREA (2)
+        if (USER_ROLE === 1 || USER_ROLE === 2) {
+          btns.push({
+            text: '<i class="fa-solid fa-plus"></i> Añadir actividad',
+            className: 'btn btn-dark btn-sm',
+            attr: {
+              'data-toggle': 'modal',
+              'data-target': '#addnew'
+            }
+          });
         }
-      ],
+
+        return btns;
+
+      })(),
+
 
 
 
