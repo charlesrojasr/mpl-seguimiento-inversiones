@@ -1426,6 +1426,74 @@
   });
 </script>
 
+<script>
+  /* ELIMINAR UNA ACTIVIDAD */
+
+  $(document).on('click', '.delete', function(e) {
+    e.preventDefault();
+
+    let id = $(this).data('id');
+
+    Swal.fire({
+      title: '¿Eliminar actividad?',
+      text: 'Esta acción no se puede revertir',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar',
+      confirmButtonColor: '#d33'
+    }).then((result) => {
+
+      if (result.isConfirmed) {
+
+        $.ajax({
+          url: 'actividades_delete.php',
+          type: 'POST',
+          data: {
+            id: id
+          },
+          dataType: 'json',
+
+          success: function(resp) {
+
+            if (resp.success) {
+
+              Swal.fire({
+                icon: 'success',
+                title: 'Eliminado',
+                text: resp.message,
+                timer: 1500,
+                showConfirmButton: false
+              });
+
+              // recargar tabla
+              if (typeof guardarFiltrosActuales === 'function') {
+                guardarFiltrosActuales();
+              }
+
+              // 🔥 Redirigir con filtros
+              let params = sessionStorage.getItem('filtrosURL') || '';
+              window.location = 'actividades.php?' + params;
+
+            } else {
+
+              Swal.fire('Error', resp.message, 'error');
+
+            }
+          },
+
+          error: function() {
+            Swal.fire('Error', 'Error en el servidor', 'error');
+          }
+        });
+
+      }
+
+    });
+
+  });
+</script>
+
 <style>
   .select-bloqueado {
     pointer-events: none;

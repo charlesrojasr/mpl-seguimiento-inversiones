@@ -165,6 +165,20 @@
                             <i class="fa-solid fa-clock-rotate-left"></i>
                         </button>
 
+                        <?php
+                        $areaActividad = $motoTaxy['area_id'] ?? $motoTaxy[$titulocampobd4]; // ajusta si ya tienes area_id directo
+
+                        if (
+                            $_SESSION['role_id'] == 1 ||
+                            ($_SESSION['role_id'] == 2 && $_SESSION['area_id'] == $motoTaxy['area_id'])
+                        ):
+                        ?>
+                            <button class="btn btn-danger btn-block delete"
+                                data-id="<?php echo $motoTaxy[$titulocampobd1]; ?>">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        <?php endif; ?>
+
 
 
                     </td>
