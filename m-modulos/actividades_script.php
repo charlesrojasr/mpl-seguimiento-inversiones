@@ -18,6 +18,7 @@
 
 <script>
   var dt = null;
+  let mostrarCompletados = false;
 
   $(function() {
 
@@ -76,6 +77,31 @@
           });
         }
 
+        btns.push({
+          text: '<i class="fa-solid fa-eye"></i>',
+          className: 'btn btn-info btn-sm',
+          attr: {
+            id: 'btnToggleCompletados'
+          },
+          action: function() {
+
+            mostrarCompletados = !mostrarCompletados;
+
+            // cambiar icono
+            if (mostrarCompletados) {
+              $('#btnToggleCompletados i')
+                .removeClass('fa-eye')
+                .addClass('fa-eye-slash');
+            } else {
+              $('#btnToggleCompletados i')
+                .removeClass('fa-eye-slash')
+                .addClass('fa-eye');
+            }
+
+            dt.draw();
+          }
+        });
+
         return btns;
 
       })(),
@@ -130,6 +156,24 @@
 
     }
 
+  })
+  $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
+
+    // columna ESTADO (en tu tabla es la 9)
+    let estado = data[9] || '';
+
+    estado = estado.toLowerCase().trim();
+
+    // 🔥 ocultar "Completado" por defecto
+    if (!mostrarCompletados) {
+
+      if (estado === 'completado') {
+        return false;
+      }
+
+    }
+
+    return true;
   });
 </script>
 
