@@ -225,6 +225,16 @@
 
               <div id="contenedor_fechas" style="display:none;">
 
+                <!-- FECHA INICIO -->
+                <div id="contenedor_fecha2" style="display:none;">
+                  <label><?php echo $titulocampobd15P; ?></label>
+                  <input
+                    type="date"
+                    name="<?php echo $titulocampobd15; ?>"
+                    id="edit_<?php echo $titulocampobd15; ?>"
+                    class="form-control editable-area">
+                </div>
+
                 <!-- FECHA FIN -->
                 <div class="mb-2">
                   <label><?php echo $titulocampobd11P; ?></label>
@@ -235,15 +245,7 @@
                     class="form-control editable-area">
                 </div>
 
-                <!-- FECHA INICIO -->
-                <div id="contenedor_fecha2" style="display:none;">
-                  <label><?php echo $titulocampobd15P; ?></label>
-                  <input
-                    type="date"
-                    name="<?php echo $titulocampobd15; ?>"
-                    id="edit_<?php echo $titulocampobd15; ?>"
-                    class="form-control editable-area">
-                </div>
+
 
               </div>
 
